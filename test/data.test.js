@@ -14,22 +14,25 @@ test('в каталоге не меньше 15 вселенных и прису�
   }
 });
 
-test('у каждой вселенной свои расы и ровно пять сил', () => {
+test('у каждой вселенной свои расы, пять сил и пять ультимейтов', () => {
   for (const universe of UNIVERSES) {
     assert.ok(universe.races.length >= 4, `${universe.name}: мало рас`);
     assert.equal(universe.powers.length, 5, `${universe.name}: должно быть пять сил`);
     assert.equal(new Set(universe.powers.map(power => power.id)).size, 5);
-    assert.ok(universe.ultimate, `${universe.name}: нет активной ульты на F`);
-    assert.ok(universe.ultimate.cooldown >= 20, `${universe.name}: слишком короткий КД ульты`);
-    assert.ok(universe.ultimate.type, `${universe.name}: не задан тип ульты`);
+    assert.equal(universe.ultimates.length, 5, `${universe.name}: должно быть пять ультимейтов`);
+    assert.equal(new Set(universe.ultimates.map(ultimate => ultimate.id)).size, 5, `${universe.name}: повторяются ультимейты`);
+    assert.ok(universe.ultimates.every(ultimate => ultimate.cooldown >= 20), `${universe.name}: слишком короткий КД ульты`);
+    assert.ok(universe.ultimates.every(ultimate => ultimate.type && ultimate.icon), `${universe.name}: ульта не доработана`);
+    assert.ok(universe.battleStyle?.weapon && universe.battleStyle?.basic, `${universe.name}: нет личного оружия`);
   }
-  assert.equal(new Set(UNIVERSES.map(universe => universe.ultimate.id)).size, UNIVERSES.length);
+  assert.equal(new Set(UNIVERSES.flatMap(universe => universe.ultimates.map(ultimate => ultimate.id))).size, UNIVERSES.length * 5);
 });
 
 test('есть семь общих рулеток по пять результатов', () => {
   assert.equal(UNIVERSAL_ROULETTES.length, 7);
   assert.ok(UNIVERSAL_ROULETTES.every(roulette => roulette.options.length === 5));
-  assert.equal(PHASES.length, 10);
+  assert.equal(PHASES.length, 11);
+  assert.equal(PHASES[3].id, 'ultimate');
   const heights = UNIVERSAL_ROULETTES.find(roulette => roulette.id === 'height').options;
   assert.ok(heights.every(option => !/15\s*метр/i.test(option.name)), 'Несбалансированный рост 15 метров не удалён');
 });
@@ -37,7 +40,7 @@ test('есть семь общих рулеток по пять результа
 test('все предметы имеют локальные PNG с ненулевым размером', () => {
   const files = [];
   for (const universe of UNIVERSES) {
-    files.push(universe.icon, universe.ultimate.icon, ...universe.races.map(race => race.icon), ...universe.powers.map(power => power.icon));
+    files.push(universe.icon, ...universe.ultimates.map(ultimate => ultimate.icon), ...universe.races.map(race => race.icon), ...universe.powers.map(power => power.icon));
   }
   for (const roulette of UNIVERSAL_ROULETTES) files.push(roulette.icon, ...roulette.options.map(option => option.icon));
   for (const file of new Set(files)) {
@@ -45,6 +48,21 @@ test('все предметы имеют локальные PNG с ненуле�
     assert.ok(fs.existsSync(full), `Нет ${file}`);
     assert.ok(fs.statSync(full).size > 100, `Пустой ${file}`);
   }
+});
+
+test('расширение территории запирает ближайшую цель на пять секунд', () => {
+  const domain = UNIVERSES.find(universe => universe.id === 'jujutsu').ultimates[0];
+  assert.equal(domain.type, 'domain');
+  assert.equal(domain.cage, true);
+  assert.equal(domain.duration, 5);
+  assert.equal(domain.damage, 15);
+  assert.equal(domain.tickRate, .5);
+});
+
+test('новый фон арены установлен локально', () => {
+  const arena = path.join(__dirname, '..', 'public', 'assets', 'arena-multiverse-v2.png');
+  assert.ok(fs.existsSync(arena));
+  assert.ok(fs.statSync(arena).size > 500000);
 });
 
 test('баланс сил не допускает нулевого урона или мгновенного спама', () => {

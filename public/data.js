@@ -108,7 +108,7 @@ const ULTIMATES = {
   'naruto': {id:'ultimate-naruto',name:'ШАРИНГАН',cooldown:30,duration:7,type:'sharingan',slow:.38,dodge:.25,description:'Все враги замедляются, движения читаются заранее.'},
   'bleach': {id:'ultimate-bleach',name:'БАНКАЙ',cooldown:31,duration:6,type:'bladeStorm',damage:34,description:'Арена заполняется серией духовных разрезов.'},
   'one-piece': {id:'ultimate-one-piece',name:'GEAR FIFTH',cooldown:32,duration:9,type:'buff',damage:1.3,speed:1.32,description:'Ника меняет физику ударов и увеличивает отдачу.'},
-  'jujutsu': {id:'ultimate-jujutsu',name:'РАСШИРЕНИЕ ТЕРРИТОРИИ',cooldown:34,duration:6,type:'domain',damage:28,slow:.55,description:'Гарантированные атаки внутри личной территории.'},
+  'jujutsu': {id:'ultimate-jujutsu',name:'РАСШИРЕНИЕ ТЕРРИТОРИИ',cooldown:34,duration:5,type:'domain',damage:15,tickRate:.5,cage:true,stun:true,description:'Ближайшая цель запирается на 5 секунд и получает 15 урона каждые 0,5 секунды.'},
   'demon-slayer': {id:'ultimate-demon-slayer',name:'МЕТКА ИСТРЕБИТЕЛЯ',cooldown:29,duration:9,type:'buff',damage:1.32,speed:1.38,description:'Темп дыхания и скорость клинка достигают предела.'},
   'attack-titan': {id:'ultimate-attack-titan',name:'ГУД ЗЕМЛИ',cooldown:36,duration:4,type:'rumbling',damage:120,description:'Земля дрожит, всех врагов сбивает ударной волной.'},
   'mha': {id:'ultimate-mha',name:'PLUS ULTRA',cooldown:29,duration:8,type:'buff',damage:1.4,speed:1.25,description:'Последний предел силы героя.'},
@@ -127,6 +127,131 @@ const ULTIMATES = {
 for (const item of UNIVERSES) {
   item.ultimate = ULTIMATES[item.id];
   item.ultimate.icon = icon(item.ultimate.id);
+}
+
+const ultimate = (id,name,type,damage,cooldown,duration,description,extra={}) => ({id,name,type,damage,cooldown,duration,description,...extra});
+const EXTRA_ULTIMATES = {
+  'opm':[
+    ultimate('opm-table-flip','СЕРЬЁЗНЫЙ ПЕРЕВОРОТ','nova',125,29,1.2,'Куски арены взлетают и ударной волной сбивают всех.',{visual:'debris'}),
+    ultimate('opm-boros','МЕТЕОРИТНЫЙ ВЗРЫВ','berserk',1.42,31,8,'Скорость, регенерация и сила выходят за пределы тела.',{speed:1.38,heal:.22,visual:'meteor'}),
+    ultimate('opm-psychic','ПСИХИЧЕСКИЙ ШТОРМ','domain',15,33,5,'Ближайший враг запирается в телекинетической клетке.',{tickRate:.5,cage:true,stun:true,visual:'psychic'}),
+    ultimate('opm-incinerate','ЯДРО ИСПЕПЕЛЕНИЯ','bladeStorm',27,30,4.5,'Серия раскалённых залпов прорезает арену.',{visual:'fire'})],
+  'death-note':[
+    ultimate('death-40','СОРОК СЕКУНД','execute',245,38,5,'Обратный отсчёт заканчивается смертельным приговором.',{visual:'notebook'}),
+    ultimate('death-eyes','ГЛАЗА СИНИГАМИ','sharingan',0,30,7,'Видит слабейшего, замедляет врагов и читает их движения.',{slow:.52,dodge:.22,visual:'eyes'}),
+    ultimate('death-perfect-plan','ИДЕАЛЬНЫЙ ПЛАН','buff',1.28,29,8,'Холодный расчёт ускоряет атаки и повышает уклонение.',{speed:1.3,dodge:.16,visual:'clock'}),
+    ultimate('death-heart','СЕРДЕЧНЫЙ ПРИСТУП','bladeStorm',24,32,5,'Чёрные метки пульсируют по всем противникам.',{visual:'notebook'})],
+  'jojo':[
+    ultimate('jojo-ger','GOLD EXPERIENCE REQUIEM','domain',15,36,5,'Ближайшая цель попадает в замкнутый цикл и не может двигаться.',{tickRate:.5,cage:true,stun:true,visual:'gold'}),
+    ultimate('jojo-heaven','MADE IN HEAVEN','buff',1.26,32,9,'Время ускоряется только для владельца.',{speed:1.58,dodge:.14,visual:'clock'}),
+    ultimate('jojo-bites','BITES THE DUST','execute',205,35,4.5,'Метка времени взрывается на самом раненом враге.',{visual:'bomb'}),
+    ultimate('jojo-ora','STAR PLATINUM: ORA','bladeStorm',26,29,4.3,'Шесть волн сверхточных ударов стенда.',{visual:'fists'})],
+  'dragon-ball':[
+    ultimate('db-instinct','УЛЬТРА-ИНСТИНКТ','buff',1.3,34,8,'Тело уклоняется само и мгновенно отвечает.',{speed:1.5,dodge:.3,visual:'silver'}),
+    ultimate('db-spirit-bomb','ГЕНКИ-ДАМА','nova',185,38,2.2,'Гигантская сфера энергии обрушивается на арену.',{visual:'energyBall'}),
+    ultimate('db-hakai','ХАКАЙ','execute',235,39,3.5,'Энергия разрушения стирает самого слабого врага.',{visual:'hakai'}),
+    ultimate('db-ultra-ego','УЛЬТРА-ЭГО','berserk',1.48,33,8,'Полученный урон превращается в ярость и силу.',{speed:1.2,heal:.18,visual:'violetAura'})],
+  'naruto':[
+    ultimate('naruto-kurama','РЕЖИМ КУРАМЫ','buff',1.38,31,9,'Чакра хвостатого ускоряет и лечит владельца.',{speed:1.35,heal:.2,visual:'chakra'}),
+    ultimate('naruto-susanoo','СОВЕРШЕННЫЙ СУСАНОО','armorBreak',1.34,34,8,'Броня чакры даёт щит и рассекает защиту.',{speed:1.08,shield:150,visual:'susanoo'}),
+    ultimate('naruto-tsukuyomi','БЕСКОНЕЧНОЕ ЦУКУЁМИ','timeStop',42,38,4.5,'Все враги застывают внутри гендзюцу.',{visual:'moon'}),
+    ultimate('naruto-baryon','БАРИОН-МОД','berserk',1.55,37,6.5,'Короткий режим предельной скорости и урона.',{speed:1.52,heal:.12,visual:'chakra'})],
+  'bleach':[
+    ultimate('bleach-mugetsu','МУГЭЦУ','nova',195,38,1.8,'Чёрная дуга духовной энергии пересекает арену.',{visual:'blackBlade'}),
+    ultimate('bleach-zanka','ЗАНКА НО ТАЧИ','bladeStorm',31,35,5,'Раскалённые разрезы выжигают пространство.',{visual:'fireBlade'}),
+    ultimate('bleach-hakka','ХАККА НО ТОГАМЭ','timeStop',48,35,4,'Ледяной банкай замораживает всех противников.',{visual:'ice'}),
+    ultimate('bleach-vollstandig','ФОЛЬШТЕНДИГ','buff',1.34,31,8,'Духовные крылья усиливают скорость и дальние атаки.',{speed:1.36,visual:'wings'})],
+  'one-piece':[
+    ultimate('op-bajrang','БАДЖРАНГ ГАН','nova',175,36,1.8,'Гигантский удар накрывает всю арену.',{visual:'giantFist'}),
+    ultimate('op-room','ROOM: ГАММА-НОЖ','domain',15,34,5,'Ближайший противник заперт в хирургической сфере.',{tickRate:.5,cage:true,stun:true,visual:'room'}),
+    ultimate('op-haki','ХАКИ ЗАВОЕВАТЕЛЯ','timeStop',44,33,3.5,'Воля владельца подавляет и оглушает всех.',{visual:'lightning'}),
+    ultimate('op-ashura','АСУРА: ДЕВЯТЬ МЕЧЕЙ','bladeStorm',29,32,4.5,'Девять клинков оставляют серию зелёных разрезов.',{visual:'greenBlade'})],
+  'jujutsu':[
+    ultimate('jjk-void','БЕСКОНЕЧНАЯ ПУСТОТА','domain',15,37,5,'Ближайшая цель тонет в потоке информации внутри клетки.',{tickRate:.5,cage:true,stun:true,visual:'void'}),
+    ultimate('jjk-shrine','ЗЛОВЕЩАЯ КУХНЯ','bladeStorm',30,35,5,'Гарантированные разрезы проходят по всей зоне.',{visual:'redSlash'}),
+    ultimate('jjk-purple','ПОЛЫЙ ФИОЛЕТОВЫЙ','nova',182,38,2,'Фиолетовая масса стирает всё на своей траектории.',{visual:'purpleBeam'}),
+    ultimate('jjk-black-flash','ЧЁРНАЯ МОЛНИЯ','berserk',1.46,31,7,'Каждый удар искажает пространство.',{speed:1.28,visual:'blackFlash'})],
+  'demon-slayer':[
+    ultimate('ds-hinokami','ХИНОКАМИ КАГУРА','bladeStorm',30,31,5,'Огненные дуги катаны непрерывно режут арену.',{visual:'fireBlade'}),
+    ultimate('ds-thirteenth','ТРИНАДЦАТАЯ ФОРМА','bladeStorm',27,33,5.5,'Все формы дыхания соединяются в непрерывный танец.',{visual:'rainbowBlade'}),
+    ultimate('ds-thunder-god','БОГ ГРОМА','nova',150,34,1.5,'Молниеносный разрез проходит сквозь всех врагов.',{visual:'lightningBlade'}),
+    ultimate('ds-moon','ЛУННОЕ ДЫХАНИЕ','bladeStorm',32,35,5,'Полумесяцы клинка заполняют пространство.',{visual:'moonBlade'})],
+  'attack-titan':[
+    ultimate('aot-colossal','ВЗРЫВ КОЛОССА','nova',168,38,2,'Трансформация создаёт огненную ударную волну.',{visual:'steam'}),
+    ultimate('aot-founder','КООРДИНАТА ОСНОВАТЕЛЯ','timeStop',38,36,4,'Сила координаты сковывает всех врагов.',{visual:'paths'}),
+    ultimate('aot-warhammer','КЛЕТКА МОЛОТОБОЙЦА','domain',15,34,5,'Ближайшего врага удерживают пики из закалки.',{tickRate:.5,cage:true,stun:true,visual:'crystal'}),
+    ultimate('aot-ackerman','ИНСТИНКТ АККЕРМАНА','buff',1.38,30,8,'Манёвры с парными клинками становятся смертоносными.',{speed:1.48,dodge:.15,visual:'dualBlade'})],
+  'mha':[
+    ultimate('mha-united','UNITED STATES OF SMASH','nova',178,36,1.7,'Предельный удар героя взрывает воздух.',{visual:'smash'}),
+    ultimate('mha-vigilante','FULL COWL 100%','buff',1.43,31,8,'Всё тело проводит максимальную мощь.',{speed:1.42,visual:'greenLightning'}),
+    ultimate('mha-decay','РАСПАД ГОРОДА','bladeStorm',30,36,5,'Волны распада расходятся по земле.',{visual:'decay'}),
+    ultimate('mha-prominence','PROMINENCE BURN','nova',166,35,2.2,'Сверхплотный столб пламени накрывает арену.',{visual:'fire'})],
+  'hunter':[
+    ultimate('hxh-godspeed','КАНМУРУ','buff',1.28,30,9,'Электрические импульсы ускоряют реакции.',{speed:1.58,dodge:.18,visual:'lightning'}),
+    ultimate('hxh-zero','ZERO HAND','nova',172,38,2.2,'Весь запас ауры превращается в единый луч.',{visual:'goldBeam'}),
+    ultimate('hxh-adult','ВЗРОСЛЫЙ ГОН','berserk',1.55,37,6,'Сила будущих лет сжигается в одном бою.',{speed:1.25,visual:'darkAura'}),
+    ultimate('hxh-jail','CHAIN JAIL','domain',15,34,5,'Цепи Нэн запирают ближайшего врага.',{tickRate:.5,cage:true,stun:true,visual:'chains'})],
+  'chainsaw':[
+    ultimate('csm-true','ИСТИННАЯ БЕНЗОПИЛА','bladeStorm',31,32,5,'Четыре ревущих лезвия оставляют кровавые следы.',{visual:'chainsaw'}),
+    ultimate('csm-control','КОНТРОЛЬ','domain',15,36,5,'Цепи запирают ближайшую цель и ломают её волю.',{tickRate:.5,cage:true,stun:true,visual:'chains'}),
+    ultimate('csm-gun','ДЕМОН-ОГНЕСТРЕЛ','bladeStorm',29,34,4.5,'Сверхзвуковые попадания приходят со всех сторон.',{visual:'bullets'}),
+    ultimate('csm-darkness','ТЬМА','timeStop',52,38,4,'На арене гаснет свет, враги не могут двигаться.',{visual:'darkness'})],
+  'black-clover':[
+    ultimate('bc-black-divider','BLACK DIVIDER','nova',165,35,1.8,'Гигантский клинок антимагии рассекает арену.',{visual:'blackBlade'}),
+    ultimate('bc-spirit-dive','SPIRIT DIVE','buff',1.35,31,8,'Дух ветра ускоряет атаки и движение.',{speed:1.46,dodge:.12,visual:'wind'}),
+    ultimate('bc-dimension','DIMENSION SLASH','bladeStorm',32,35,4.5,'Тёмные разрезы прорезают само пространство.',{visual:'darkBlade'}),
+    ultimate('bc-time','ХРОНОСТАЗ','timeStop',45,37,4,'Магия времени останавливает противников.',{visual:'clock'})],
+  'solo-leveling':[
+    ultimate('sl-arise','ВСТАНЬ','berserk',1.4,33,8,'Теневая энергия усиливает владельца без отдельных помощников.',{speed:1.3,heal:.2,visual:'shadow'}),
+    ultimate('sl-daggers','ТАНЕЦ ДВУХ КИНЖАЛОВ','bladeStorm',29,31,5,'Серия фиолетовых разрезов возникает вокруг врагов.',{visual:'dualBlade'}),
+    ultimate('sl-ruler','СЕРДЦЕ МОНАРХА','buff',1.42,34,8,'Власть монарха увеличивает силу и скорость.',{speed:1.36,dodge:.12,visual:'violetAura'}),
+    ultimate('sl-shadow-prison','ТЕНЕВАЯ ТЮРЬМА','domain',15,36,5,'Ближайший враг запирается в клетке из теней.',{tickRate:.5,cage:true,stun:true,visual:'shadowCage'})],
+  'fullmetal':[
+    ultimate('fma-truth','ВРАТА ИСТИНЫ','execute',220,39,4,'Истина забирает часть существования слабейшей цели.',{visual:'gate'}),
+    ultimate('fma-circle','ТРАНСМУТАЦИЯ БЕЗ КРУГА','bladeStorm',28,31,5,'Каменные пики возникают серией под всеми врагами.',{visual:'alchemy'}),
+    ultimate('fma-flame','ОГНЕННЫЙ ШКВАЛ','nova',158,35,2,'Серия точных взрывов складывается в огненный купол.',{visual:'fire'}),
+    ultimate('fma-ultimate-eye','АБСОЛЮТНЫЙ ГЛАЗ','sharingan',0,32,7,'Предсказывает движения и замедляет противников.',{slow:.58,dodge:.24,visual:'eye'})],
+  'tokyo-ghoul':[
+    ultimate('tg-centipede','СТОНОЖКА','bladeStorm',29,32,5,'Кагуне хлещет по арене со всех направлений.',{visual:'kagune'}),
+    ultimate('tg-owl','ОДНОГЛАЗАЯ СОВА','berserk',1.43,34,8,'Броня какуджи усиливает урон и вампиризм.',{speed:1.2,heal:.32,visual:'kakuja'}),
+    ultimate('tg-red-field','ПОЛЕ RC-КЛЕТОК','domain',15,35,5,'Ближайшая цель запирается внутри живой клетки.',{tickRate:.5,cage:true,stun:true,visual:'kaguneCage'}),
+    ultimate('tg-ukaku-rain','ДОЖДЬ УКАКУ','bladeStorm',27,31,4.5,'Кристаллические снаряды обрушиваются волнами.',{visual:'crystal'})],
+  'mob':[
+    ultimate('mob-question','???%','nova',190,39,2,'Неконтролируемая психическая волна сметает всех.',{visual:'psychic'}),
+    ultimate('mob-barrier','АБСОЛЮТНЫЙ БАРЬЕР','alchemy',1.22,32,8,'Мощный щит восстанавливает здоровье и усиливает телекинез.',{heal:220,shield:160,visual:'barrier'}),
+    ultimate('mob-crush','ПСИХИЧЕСКИЙ ПРЕСС','domain',15,35,5,'Ближайшая цель зажата в телекинетической клетке.',{tickRate:.5,cage:true,stun:true,visual:'psychic'}),
+    ultimate('mob-courage','100% ХРАБРОСТИ','buff',1.35,31,8,'Эмоции превращаются в контролируемую мощь.',{speed:1.34,dodge:.13,visual:'rainbowAura'})],
+  'gurren':[
+    ultimate('gurren-giga','GIGA DRILL BREAK','nova',188,38,2,'Гигантский бур пробивает центр арены.',{visual:'drill'}),
+    ultimate('gurren-tengen','ТЭНГЕН ТОППА','berserk',1.52,37,7,'Спиральная энергия увеличивает тело, скорость и силу.',{speed:1.34,heal:.18,visual:'galaxy'}),
+    ultimate('gurren-lagann','КТО МЫ ТАКИЕ?!','buff',1.4,31,9,'Воля команды не даёт владельцу остановиться.',{speed:1.38,dodge:.1,visual:'drill'}),
+    ultimate('gurren-spiral-cage','СПИРАЛЬНАЯ ТЮРЬМА','domain',15,35,5,'Вращающиеся буры запирают ближайшего врага.',{tickRate:.5,cage:true,stun:true,visual:'drillCage'})],
+  'eminence':[
+    ultimate('eminence-recovery','RECOVERY ATOMIC','alchemy',1.28,36,8,'Атомная магия восстанавливает тело и создаёт щит.',{heal:250,shield:130,visual:'atomic'}),
+    ultimate('eminence-sword','ТЕНЕВОЙ РАЗРЕЗ','bladeStorm',32,33,5,'Слизевой клинок создаёт десятки фиолетовых дуг.',{visual:'slimeBlade'}),
+    ultimate('eminence-overdrive','MAGIC OVERDRIVE','buff',1.46,34,7,'Контроль магии достигает атомной точности.',{speed:1.35,dodge:.13,visual:'violetAura'}),
+    ultimate('eminence-shadow-prison','САД ТЕНЕЙ','domain',15,36,5,'Ближайшая цель исчезает внутри фиолетовой клетки.',{tickRate:.5,cage:true,stun:true,visual:'shadowCage'})],
+  'fairy-tail':[
+    ultimate('ft-fairy-law','FAIRY LAW','nova',176,38,2,'Свет гильдии поражает всех признанных врагами.',{visual:'gold'}),
+    ultimate('ft-natsu','РЕЖИМ КОРОЛЯ ДРАКОНОВ','berserk',1.46,34,8,'Драконье пламя усиливает удары и скорость.',{speed:1.32,heal:.14,visual:'dragonFire'}),
+    ultimate('ft-za-warudo','МИР ЛЬДА','timeStop',44,36,4,'Абсолютный лёд сковывает всех противников.',{visual:'ice'}),
+    ultimate('ft-heaven','СЕМА','nova',168,37,2.5,'Небесное тело падает в центр арены.',{visual:'meteor'})]
+};
+
+const BATTLE_STYLES = {
+  'opm':{weapon:'fist',basic:'fist'},'death-note':{weapon:'notebook',basic:'notebook'},'jojo':{weapon:'standFist',basic:'fist'},
+  'dragon-ball':{weapon:'ki',basic:'ki'},'naruto':{weapon:'kunai',basic:'blade'},'bleach':{weapon:'katana',basic:'blade'},
+  'one-piece':{weapon:'hakiFist',basic:'fist'},'jujutsu':{weapon:'cursedBlade',basic:'magic'},'demon-slayer':{weapon:'nichirin',basic:'blade'},
+  'attack-titan':{weapon:'dualBlade',basic:'blade'},'mha':{weapon:'gauntlet',basic:'fist'},'hunter':{weapon:'nenCard',basic:'magic'},
+  'chainsaw':{weapon:'chainsaw',basic:'chainsaw'},'black-clover':{weapon:'greatsword',basic:'blade'},'solo-leveling':{weapon:'dualDagger',basic:'blade'},
+  'fullmetal':{weapon:'automail',basic:'alchemy'},'tokyo-ghoul':{weapon:'kagune',basic:'kagune'},'mob':{weapon:'psychic',basic:'psychic'},
+  'gurren':{weapon:'drill',basic:'drill'},'eminence':{weapon:'slimeSword',basic:'blade'},'fairy-tail':{weapon:'magicSeal',basic:'magic'}
+};
+
+for (const item of UNIVERSES) {
+  item.ultimates=[item.ultimate,...EXTRA_ULTIMATES[item.id]];
+  item.ultimates.forEach((value,index)=>{value.icon=index===0?item.ultimate.icon:item.powers[index-1].icon;value.visual||=(BATTLE_STYLES[item.id]?.weapon||'energy');});
+  item.battleStyle=BATTLE_STYLES[item.id];
 }
 
 const UNIVERSAL_ROULETTES = [
@@ -149,6 +274,7 @@ const PHASES = [
   {id:'universe',name:'ВСЕЛЕННАЯ',short:'ВЕРС',type:'universe'},
   {id:'race',name:'РАСА ВСЕЛЕННОЙ',short:'РАСА',type:'race'},
   {id:'power',name:'УНИКАЛЬНАЯ СИЛА',short:'СИЛА',type:'power'},
+  {id:'ultimate',name:'УЛЬТИМЕЙТ ВСЕЛЕННОЙ',short:'УЛЬТА',type:'ultimate'},
   ...UNIVERSAL_ROULETTES.map(item=>({id:item.id,name:item.name,short:item.name.split(' ')[0],type:'universal'}))
 ];
 

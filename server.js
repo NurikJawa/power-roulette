@@ -32,6 +32,15 @@ function serve(req, res) {
 
 function cleanName(value) { return String(value || "Игрок").replace(/[<>]/g, "").trim().slice(0, 16) || "Игрок"; }
 function cleanColor(value) { return /^#[0-9a-f]{6}$/i.test(value) ? value : "#d8ff45"; }
+const APPEARANCE_OPTIONS = {
+  face:new Set(["classic","fierce","cyclops","visor"]),
+  aura:new Set(["none","flame","electric","shadow"]),
+  accessory:new Set(["none","headband","horns","halo"]),
+  pattern:new Set(["solid","split","ring","core"])
+};
+function cleanAppearance(value = {}) {
+  return Object.fromEntries(Object.entries(APPEARANCE_OPTIONS).map(([key,allowed])=>[key,allowed.has(value?.[key])?value[key]:allowed.values().next().value]));
+}
 function makeCode() {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code;
@@ -78,7 +87,7 @@ wss.on("connection", ws => {
       const code = makeCode();
       const room = { code, hostId:ws.clientId, started:false, clients:new Map() };
       ws.roomCode = code;
-      room.clients.set(ws.clientId, { ws, player:{ id:ws.clientId, name:cleanName(message.name), color:cleanColor(message.color) } });
+      room.clients.set(ws.clientId, { ws, player:{ id:ws.clientId, name:cleanName(message.name), color:cleanColor(message.color), appearance:cleanAppearance(message.appearance) } });
       rooms.set(code, room); publish(room); return;
     }
     if (message.type === "join") {
@@ -88,7 +97,7 @@ wss.on("connection", ws => {
       if (room.started) return send(ws, { type:"error", message:"Рулетка уже запущена" });
       if (room.clients.size >= 10) return send(ws, { type:"error", message:"В комнате уже 10 игроков" });
       ws.roomCode = room.code;
-      room.clients.set(ws.clientId, { ws, player:{ id:ws.clientId, name:cleanName(message.name), color:cleanColor(message.color) } });
+      room.clients.set(ws.clientId, { ws, player:{ id:ws.clientId, name:cleanName(message.name), color:cleanColor(message.color), appearance:cleanAppearance(message.appearance) } });
       publish(room); return;
     }
 
@@ -98,11 +107,11 @@ wss.on("connection", ws => {
     const isHost = room.hostId === ws.clientId;
 
     if (message.type === "profile" && !room.started) {
-      client.player.name = cleanName(message.name); client.player.color = cleanColor(message.color); publish(room);
+      client.player.name = cleanName(message.name); client.player.color = cleanColor(message.color); client.player.appearance = cleanAppearance(message.appearance); publish(room);
     } else if (message.type === "leave") {
       leave(ws); send(ws, { type:"left" });
     } else if (message.type === "start" && isHost && room.clients.size >= 2) {
-      room.started = true; broadcast(room, { type:"start", players:message.players }); publish(room);
+      room.started = true; broadcast(room, { type:"start", players:[...room.clients.values()].map(item=>item.player) }); publish(room);
     } else if (message.type === "spin_request" && room.started) {
       send(room.clients.get(room.hostId)?.ws, { type:"spin_request", senderId:ws.clientId });
     } else if (message.type === "ability_request" && room.started) {

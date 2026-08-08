@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="wheel-fix.css">
   <link rel="stylesheet" href="action-fx.css">
+  <link rel="stylesheet" href="avatar.css">
 </head>
 <body>
   <div class="noise"></div>
@@ -20,9 +21,9 @@
       </nav>
       <div class="menu-grid">
         <div class="hero">
-          <p class="kicker"><i></i> 21 ВСЕЛЕННАЯ · 10 РУЛЕТОК · ОДНА АРЕНА</p>
+          <p class="kicker"><i></i> 21 ВСЕЛЕННАЯ · 11 РУЛЕТОК · ОДНА АРЕНА</p>
           <h1>КЕМ ТЫ<br><span>СТАНЕШЬ?</span></h1>
-          <p class="hero-text">Сначала судьба выбирает вселенную. Потом — её расу и уникальную силу. Семь общих рулеток завершают бойца, а дальше остаётся только выжить.</p>
+          <p class="hero-text">Сначала судьба выбирает вселенную. Потом — её расу, силу и один из пяти ультимейтов. Семь общих рулеток завершают бойца, а дальше остаётся только выжить.</p>
           <div id="universeTicker" class="universe-ticker"></div>
         </div>
         <div class="connect-card">
@@ -46,6 +47,16 @@
       <div class="lobby-inner">
         <p class="kicker light-kicker"><i></i> СБОР БОЙЦОВ</p>
         <h2>ЖДЁМ<br><span>ВСЕХ</span></h2>
+        <div class="avatar-customizer">
+          <div class="customizer-preview"><div id="lobbyAvatar" class="custom-orb"></div><div><small>ТВОЙ ОБЛИК</small><b>ВИДЕН ВСЕМ ИГРОКАМ</b><span>Изменения сохраняются автоматически</span></div></div>
+          <div class="customizer-controls">
+            <label>ЦВЕТ <input id="lobbyColor" type="color" value="#d8ff45"></label>
+            <label>ЛИЦО <select id="faceStyle"><option value="classic">Классика</option><option value="fierce">Боевой взгляд</option><option value="cyclops">Циклоп</option><option value="visor">Визор</option></select></label>
+            <label>АУРА <select id="auraStyle"><option value="none">Нет</option><option value="flame">Пламя</option><option value="electric">Молния</option><option value="shadow">Тень</option></select></label>
+            <label>АКСЕССУАР <select id="accessoryStyle"><option value="none">Нет</option><option value="headband">Повязка</option><option value="horns">Рога</option><option value="halo">Нимб</option></select></label>
+            <label>КОРПУС <select id="patternStyle"><option value="solid">Обычный</option><option value="split">Два тона</option><option value="ring">Кольцо</option><option value="core">Энергоядро</option></select></label>
+          </div>
+        </div>
         <div id="onlinePlayers" class="online-players"></div>
         <button id="startRoulette" class="primary lobby-start"><span>ЗАПУСТИТЬ РУЛЕТКУ</span><b>⚡</b></button>
         <p id="lobbyHint">Подключите минимум двух игроков</p>
@@ -55,7 +66,7 @@
     <section id="rouletteScreen" class="screen roulette-screen">
       <header class="topbar">
         <button class="logo-button" data-home><span>R</span> РУЛЕТКА СИЛЫ</button>
-        <div class="phase"><small id="phaseNumber">ЭТАП 1 ИЗ 10</small><b id="phaseName">ВСЕЛЕННАЯ</b></div>
+        <div class="phase"><small id="phaseNumber">ЭТАП 1 ИЗ 11</small><b id="phaseName">ВСЕЛЕННАЯ</b></div>
         <button id="soundToggle" class="circle-btn">♪</button>
       </header>
       <div class="roulette-layout">
@@ -108,7 +119,7 @@
     </section>
   </main>
 
-  <div id="rulesModal" class="overlay hidden"><article class="modal"><button class="modal-x" data-close-rules>×</button><p class="kicker"><i></i> ПРАВИЛА</p><h2>СУДЬБА СОБИРАЕТ.<br>АРЕНА ПРОВЕРЯЕТ.</h2><ol><li>Колесо выбирает одну из 21 вселенной.</li><li>Следующие колёса используют только расы и силы выпавшей вселенной.</li><li>Затем выпадают сила тела, IQ, скорость, прочность, рост, опыт и удача.</li><li>Движение автоматическое. ЛКМ направляет обычный удар, E активирует выпавшую способность, F — ульту вселенной.</li><li>Рывок не является общей командой: он доступен только способностям с механикой рывка. После 50 секунд зона сужается.</li></ol><button class="primary" data-close-rules><span>ПОНЯТНО</span><b>→</b></button></article></div>
+  <div id="rulesModal" class="overlay hidden"><article class="modal"><button class="modal-x" data-close-rules>×</button><p class="kicker"><i></i> ПРАВИЛА</p><h2>СУДЬБА СОБИРАЕТ.<br>АРЕНА ПРОВЕРЯЕТ.</h2><ol><li>Колесо выбирает одну из 21 вселенной.</li><li>Следующие колёса используют только расы, силы и пять ультимейтов выпавшей вселенной.</li><li>Четвёртый этап выбирает личный ультимейт на F, затем выпадают семь общих характеристик.</li><li>Движение автоматическое. ЛКМ направляет обычный удар, E активирует выпавшую способность, F — выпавшую ульту.</li><li>Рывок не является общей командой: он доступен только способностям с механикой рывка. После 50 секунд зона сужается.</li></ol><button class="primary" data-close-rules><span>ПОНЯТНО</span><b>→</b></button></article></div>
 
   <div id="buildModal" class="overlay hidden"><article class="modal build-modal"><button class="modal-x" id="closeBuild">×</button><p class="kicker"><i></i> ПАСПОРТ БОЙЦА</p><h2 id="buildName">МОЯ СБОРКА</h2><div id="buildContent" class="build-content"></div></article></div>
 

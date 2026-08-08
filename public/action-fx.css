@@ -77,3 +77,14 @@
 @keyframes arena-impact { 20%{transform:translate(7px,-4px)} 40%{transform:translate(-6px,5px)} 60%{transform:translate(5px,3px)} 80%{transform:translate(-3px,-4px)} }
 
 @media(max-width:620px){.ability-hud{left:13px;bottom:13px;min-width:220px;padding:7px}.skill-hud{bottom:82px}.ability-icon{width:45px;height:45px}.ability-icon img{width:37px;height:37px}.ability-info b{font-size:9px}.ultimate-core p{font-size:10px}.ultimate-core h2{font-size:clamp(30px,11vw,55px)}}
+
+/* Variant-specific ultimate cinematics */
+.ultimate-cinematic[class*="drill" i] .ultimate-ring{border-style:dashed;border-width:8px;animation:cinematic-spin .45s linear infinite;clip-path:polygon(50% 0,63% 36%,100% 50%,63% 64%,50% 100%,37% 64%,0 50%,37% 36%)}
+.ultimate-cinematic[class*="drill" i] .ultimate-core img{animation:icon-impact 1.2s cubic-bezier(.12,.9,.2,1) both,sharingan-spin .48s linear infinite}
+.ultimate-cinematic[class*="blade" i] .ultimate-speedlines,.ultimate-cinematic[class*="slash" i] .ultimate-speedlines{opacity:.78;transform:skewX(-20deg) scale(2.2);animation:speed-pulse .08s infinite alternate}
+.ultimate-cinematic[class*="fire" i],.ultimate-cinematic[class*="meteor" i]{background:radial-gradient(circle,#fff5c7 0,#ff8d22 9%,#9e1717 43%,#050507 78%)}
+.ultimate-cinematic[class*="ice" i]{background:radial-gradient(circle,#fff 0,#73e4ff 10%,#12336c 46%,#050507 80%)}
+.ultimate-cinematic[class*="cage" i],.ultimate-cinematic[class*="void" i],.ultimate-cinematic[class*="room" i]{background:radial-gradient(circle,#f1eaff 0,#7440dd 9%,#160d36 47%,#030307 78%)}
+.ultimate-cinematic[class*="cage" i] .ultimate-ring,.ultimate-cinematic[class*="void" i] .ultimate-ring,.ultimate-cinematic[class*="room" i] .ultimate-ring{border-width:7px;border-style:double;animation:cinematic-spin 1s steps(12) infinite}
+.ultimate-cinematic[class*="notebook" i],.ultimate-cinematic[class*="clock" i],.ultimate-cinematic[class*="darkness" i]{filter:grayscale(.8) contrast(1.45);background:radial-gradient(circle,#eee 0,#222 14%,#030303 68%)}
+.ultimate-cinematic[class*="lightning" i] .ultimate-speedlines{opacity:.9;animation:speed-pulse .055s steps(2) infinite alternate}
