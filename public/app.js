@@ -233,6 +233,9 @@ function showBuild() {
 const canvas=$("#arena"),ctx=canvas.getContext("2d"),images=new Map();
 let lastUltimateEventId=0,lastActionEventId=0;
 function imageFor(src){if(!images.has(src)){const image=new Image();image.src=src;images.set(src,image);}return images.get(src);}
+let arenaBackdropCache=null;
+function drawArenaBackdrop(W,H){
+  const backdrop=imageFor("assets/arena-multiverse-v2.png");if(!arenaBackdropCache&&backdrop.complete&&backdrop.naturalWidth){const layer=document.createElement("canvas");layer.width=W;layer.height=H;const paint=layer.getContext("2d");paint.fillStyle="#06060a";paint.fillRect(0,0,W,H);paint.globalAlpha=.86;paint.drawImage(backdrop,0,0,W,H);paint.globalAlpha=1;const shade=paint.createRadialGradient(W/2,H/2,40,W/2,H/2,W*.65);shade.addColorStop(0,"rgba(5,7,14,.08)");shade.addColorStop(1,"rgba(2,2,6,.5)");paint.fillStyle=shade;paint.fillRect(0,0,W,H);paint.save();paint.translate(W/2,H/2);paint.strokeStyle="rgba(127,190,255,.12)";paint.lineWidth=1;for(let radius=70;radius<620;radius+=70){paint.beginPath();paint.ellipse(0,30,radius,radius*.54,0,0,Math.PI*2);paint.stroke()}for(let ray=0;ray<24;ray++){const angle=ray*Math.PI/12;paint.beginPath();paint.moveTo(Math.cos(angle)*35,30+Math.sin(angle)*20);paint.lineTo(Math.cos(angle)*650,30+Math.sin(angle)*350);paint.stroke()}paint.restore();arenaBackdropCache=layer}else if(!backdrop._arenaHook){backdrop._arenaHook=true;backdrop.addEventListener("load",()=>{arenaBackdropCache=null},{once:true})}if(arenaBackdropCache)ctx.drawImage(arenaBackdropCache,0,0);else{ctx.fillStyle="#06060a";ctx.fillRect(0,0,W,H)}}
 function stat(player,id,key,fallback=1){return player.attrs[id]?.stats?.[key]??fallback;}
 function addStat(player,key){return ["iq","combat","luck"].reduce((sum,id)=>sum+(player.attrs[id]?.stats?.[key]||0),0);}
 function fighterUltimate(fighter){return fighter?.ultimate||fighter?.universe?.ultimate||null}
@@ -423,10 +426,7 @@ function applyBattleSnapshot(snapshot){
 }
 
 function drawBattle(){
-  const b=state.battle;if(!b)return;const W=canvas.width,H=canvas.height,backdrop=imageFor("assets/arena-multiverse-v2.png");
-  ctx.fillStyle="#06060a";ctx.fillRect(0,0,W,H);if(backdrop.complete&&backdrop.naturalWidth){ctx.globalAlpha=.86;ctx.drawImage(backdrop,0,0,W,H);ctx.globalAlpha=1}
-  const shade=ctx.createRadialGradient(W/2,H/2,40,W/2,H/2,W*.65);shade.addColorStop(0,"rgba(5,7,14,.08)");shade.addColorStop(1,"rgba(2,2,6,.5)");ctx.fillStyle=shade;ctx.fillRect(0,0,W,H);
-  ctx.save();ctx.translate(W/2,H/2);ctx.strokeStyle="rgba(127,190,255,.12)";ctx.lineWidth=1;for(let radius=70;radius<620;radius+=70){ctx.beginPath();ctx.ellipse(0,30,radius,radius*.54,0,0,Math.PI*2);ctx.stroke()}for(let ray=0;ray<24;ray++){const angle=ray*Math.PI/12;ctx.beginPath();ctx.moveTo(Math.cos(angle)*35,30+Math.sin(angle)*20);ctx.lineTo(Math.cos(angle)*650,30+Math.sin(angle)*350);ctx.stroke()}ctx.restore();
+  const b=state.battle;if(!b)return;const W=canvas.width,H=canvas.height;drawArenaBackdrop(W,H);
   const z=b.zone,danger=ctx.createLinearGradient(0,0,W,H);danger.addColorStop(0,"rgba(255,35,55,.2)");danger.addColorStop(.5,"rgba(68,12,22,.08)");danger.addColorStop(1,"rgba(167,42,255,.18)");ctx.fillStyle=danger;ctx.fillRect(0,0,z.left,H);ctx.fillRect(z.right,0,W-z.right,H);ctx.fillRect(z.left,0,z.right-z.left,z.top);ctx.fillRect(z.left,z.bottom,z.right-z.left,H-z.bottom);ctx.strokeStyle=z.announced?"#ff4b58":"rgba(167,208,255,.42)";ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=z.announced?18:7;ctx.lineWidth=5;ctx.strokeRect(z.left,z.top,z.right-z.left,z.bottom-z.top);ctx.shadowBlur=0;
   for(const f of b.fighters)if(f.alive&&f.cagedUntil>b.time)drawCage(f);for(const shot of b.projectiles)drawProjectile(shot);for(const f of b.fighters)if(f.alive)drawFighter(f);for(const effect of b.effects)drawEffect(effect);for(const text of b.texts){ctx.globalAlpha=Math.max(0,text.life/.8);ctx.fillStyle=text.color;ctx.font="700 15px Rubik";ctx.textAlign="center";ctx.shadowColor="#000";ctx.shadowBlur=5;ctx.fillText(text.text,text.x,text.y);ctx.globalAlpha=1;ctx.shadowBlur=0}updateHud();
 }
