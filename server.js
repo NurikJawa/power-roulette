@@ -65,6 +65,7 @@ function leave(ws) {
 const server = http.createServer(serve);
 const wss = new WebSocketServer({ server, maxPayload:512 * 1024 });
 wss.on("connection", ws => {
+  ws.isAlive = true;
   ws.clientId = crypto.randomUUID();
   ws.roomCode = null;
   send(ws, { type:"hello", clientId:ws.clientId });
@@ -123,14 +124,25 @@ wss.on("connection", ws => {
     }
   });
   ws.on("close", () => leave(ws));
+  ws.on("pong", () => { ws.isAlive = true; });
   ws.on("error", () => {});
 });
+
+const heartbeat = setInterval(() => {
+  for (const ws of wss.clients) {
+    if (!ws.isAlive) { ws.terminate(); continue; }
+    ws.isAlive = false;
+    ws.ping();
+  }
+}, 30000);
+heartbeat.unref();
 
 server.on("error", error => {
   if (error.code === "EADDRINUSE") console.error(`Порт ${port} занят. Открой уже запущенную игру или задай PORT.`);
   else console.error(error);
   process.exit(1);
 });
+server.on("close", () => clearInterval(heartbeat));
 server.listen(port, "0.0.0.0", () => console.log(`РУЛЕТКА СИЛЫ: http://localhost:${port}`));
 
 module.exports = { server };

@@ -7,7 +7,7 @@ const PLAYER_COLORS = ["#d8ff45","#ff5c4d","#55cfff","#a46bff","#ffcf3d","#ff74b
 const state = {
   players:[], turn:0, phaseIndex:0, rotation:0, spinning:false, sound:true, speed:1,
   randomSeed:Date.now()>>>0, battle:null,
-  multiplayer:{ socket:null, clientId:null, room:null, autoJoined:false }
+  multiplayer:{ socket:null, clientId:null, room:null, autoJoined:false, reconnectTimer:null, reconnectAttempt:0 }
 };
 
 const sounds = Object.fromEntries(["click","tick","reveal","phase","hit","heavy","block","ko","wheel-spin","sharingan","time-stop","ultimate","beam","domain","transform"].map(name => {
@@ -49,10 +49,19 @@ function currentProfile() {
 }
 
 function connectMultiplayer() {
+  clearTimeout(state.multiplayer.reconnectTimer);
+  if ([WebSocket.OPEN,WebSocket.CONNECTING].includes(state.multiplayer.socket?.readyState)) return;
   const protocol=location.protocol==="https:"?"wss:":"ws:";
-  const socket=new WebSocket(`${protocol}//${location.host}`); state.multiplayer.socket=socket;
-  socket.addEventListener("message",({data})=>handleMessage(JSON.parse(data)));
-  socket.addEventListener("close",()=>showToast("Связь с сервером потеряна"));
+  const socket=new WebSocket(`${protocol}//${location.host}/ws`);state.multiplayer.socket=socket;
+  socket.addEventListener("open",()=>{if(state.multiplayer.socket!==socket)return;state.multiplayer.reconnectAttempt=0;setRoomMessage("Сервер подключён")});
+  socket.addEventListener("message",({data})=>{if(state.multiplayer.socket===socket)handleMessage(JSON.parse(data))});
+  socket.addEventListener("close",()=>{
+    if(state.multiplayer.socket!==socket)return;
+    state.multiplayer.socket=null;
+    const attempt=state.multiplayer.reconnectAttempt++,delay=Math.min(8000,750*2**Math.min(attempt,4));
+    if(room())showToast("Связь потеряна — переподключаемся…");else setRoomMessage("Сервер просыпается — подключаемся…");
+    state.multiplayer.reconnectTimer=setTimeout(connectMultiplayer,delay);
+  });
 }
 function setRoomMessage(message,error=false) { $("#roomMessage").textContent=message; $("#roomMessage").classList.toggle("error",error); }
 function handleMessage(message) {
@@ -443,7 +452,7 @@ function applyHome(){if(state.battle?.raf)cancelAnimationFrame(state.battle.raf)
 
 // ---------------- Interface events ----------------
 $("#createRoom").addEventListener("click",()=>{if(state.multiplayer.socket?.readyState!==WebSocket.OPEN)return setRoomMessage("Сервер ещё подключается",true);send({type:"create",...currentProfile()});setRoomMessage("Создаём комнату…")});
-$("#joinRoom").addEventListener("click",()=>{const code=$("#roomCodeInput").value.trim().toUpperCase();if(code.length!==5)return setRoomMessage("В коде должно быть 5 символов",true);send({type:"join",code,...currentProfile()});setRoomMessage("Подключаемся…")});
+$("#joinRoom").addEventListener("click",()=>{const code=$("#roomCodeInput").value.trim().toUpperCase();if(code.length!==5)return setRoomMessage("В коде должно быть 5 символов",true);if(state.multiplayer.socket?.readyState!==WebSocket.OPEN)return setRoomMessage("Сервер ещё подключается",true);send({type:"join",code,...currentProfile()});setRoomMessage("Подключаемся…")});
 $("#roomCodeInput").addEventListener("input",event=>event.target.value=event.target.value.toUpperCase().replace(/[^A-Z2-9]/g,"").slice(0,5));
 $("#startRoulette").addEventListener("click",()=>{if(!isHost()||room().players.length<2)return;send({type:"start",players:room().players})});
 $("#spinButton").addEventListener("click",requestSpin);$("#openBuild").addEventListener("click",showBuild);$("#closeBuild").addEventListener("click",()=>$("#buildModal").classList.add("hidden"));
