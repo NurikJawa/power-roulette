@@ -38,6 +38,8 @@ source_for() {
     gurren) echo "drill";; fairy-tail) echo "fairy-wings";; re-zero) echo "crystal-wand";;
     evangelion) echo "robot-golem";; slime) echo "slime";; ragnarok) echo "thor-hammer";;
     parasyte) echo "tentacles-skull";; seven-deadly-sins) echo "seven-pointed-star";;
+    overlord) echo "crowned-skull";; misfit) echo "daemon-skull";; hellsing) echo "vampire-dracula";;
+    gachiakuta) echo "trash-can";; frieren) echo "wizard-staff";; fate) echo "holy-grail";;
     ultimate-opm) echo "punch-blast";; ultimate-death-note) echo "death-note";; ultimate-jojo) echo "stopwatch";;
     ultimate-dragon-ball) echo "aura";; ultimate-naruto) echo "all-seeing-eye";; ultimate-bleach) echo "sword-array";;
     ultimate-one-piece) echo "spring";; ultimate-jujutsu) echo "pentacle";; ultimate-demon-slayer) echo "flaming-claw";;
@@ -47,6 +49,8 @@ source_for() {
     ultimate-gurren) echo "drill";; ultimate-eminence) echo "atomic-slashes";; ultimate-fairy-tail) echo "dragon-head";;
     ultimate-re-zero) echo "cycle";; ultimate-evangelion) echo "robot-golem";; ultimate-slime) echo "dripping-goo";;
     ultimate-ragnarok) echo "hammer-drop";; ultimate-parasyte) echo "tentacle-strike";; ultimate-seven-deadly-sins) echo "daemon-skull";;
+    ultimate-overlord) echo "death-skull";; ultimate-misfit) echo "evil-eyes";; ultimate-hellsing) echo "vampire-dracula";;
+    ultimate-gachiakuta) echo "gloves";; ultimate-frieren) echo "laser-blast";; ultimate-fate) echo "crossed-swords";;
     return-by-death) echo "time-trap";; invisible-providence) echo "invisible-face";; el-huma) echo "ice-bolt";;
     oni-blood) echo "horned-helm";; shamak) echo "shadow-grasp";;
     at-field) echo "energy-shield";; progressive-knife) echo "stiletto";; positron-rifle) echo "laser-blast";;
@@ -59,6 +63,18 @@ source_for() {
     parasite-senses) echo "six-eyes";; body-takeover) echo "internal-organ";;
     full-counter) echo "mirror-mirror";; snatch) echo "grab";; disaster) echo "root-tip";;
     creation) echo "stone-pile";; infinity) echo "infinity";;
+    grasp-heart) echo "heart-organ";; reality-slash) echo "sword-slice";; fallen-down) echo "sunbeams";;
+    shalltear-lance) echo "spear-hook";; cocytus-frost) echo "ice-spell-cast";;
+    jio-graze) echo "fire-ray";; ingall) echo "healing";; demon-eyes) echo "evil-eyes";;
+    venu-zdonoa) echo "sword-slice";; source-reversal) echo "magic-swirl";;
+    casull-jackal) echo "revolver";; alucard-regeneration) echo "healing";; black-dog) echo "tentacles-skull";;
+    harkonnen) echo "machine-gun";; anderson-bayonets) echo "bayonet";;
+    rudo-3r) echo "gloves";; enjin-umbrella) echo "umbrella";; zanka-stick) echo "bo";;
+    riyo-ripper) echo "scissors";; jabber-mankira) echo "poison-gas";;
+    zoltraak) echo "laser-blast";; frieren-defense) echo "shield-reflect";; mana-suppression) echo "aura";;
+    ubel-cleave) echo "sword-slice";; stark-strike) echo "thor-hammer";;
+    excalibur) echo "broadsword";; gae-bolg) echo "spear-hook";; rho-aias) echo "shield-reflect";;
+    gate-babylon) echo "open-treasure-chest";; mystic-eyes) echo "evil-eyes";;
     stat-strength|strength-*) echo "biceps";; stat-iq|iq-*) echo "brain";; stat-speed|speed-*) echo "sprint";;
     stat-durability|durability-*) echo "armor-vest";; stat-height|height-*) echo "body-height";;
     stat-combat|combat-*) echo "crossed-swords";; stat-luck|luck-*) echo "perspective-dice-six-faces-random";;

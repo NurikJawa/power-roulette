@@ -26,6 +26,8 @@
 .ability-bar i { display: block; width: 100%; height: 100%; background: var(--ability-color, #d8ff45); transition: width .08s linear; }
 .ability-hud.ready { animation: ability-ready .7s infinite alternate; }
 .ability-hud.ready .ability-icon { box-shadow: 0 0 24px color-mix(in srgb, var(--ability-color) 70%, transparent); }
+.ability-hud.aiming { border-color:var(--ability-color);box-shadow:0 0 34px color-mix(in srgb,var(--ability-color) 42%,transparent),6px 6px 0 rgba(0,0,0,.55);animation:aiming-hud .28s infinite alternate }
+.ability-hud.aiming .ability-icon { transform:scale(1.06);box-shadow:0 0 28px var(--ability-color) }
 .ability-hud { cursor: pointer; user-select: none; }
 .ability-hud.disabled { opacity: .45; filter: grayscale(1); cursor: default; }
 .skill-hud { bottom: 112px; }
@@ -33,6 +35,7 @@
 .combat-help { position:absolute; top:48px; left:50%; z-index:7; transform:translateX(-50%); padding:7px 10px; color:#94939a; background:rgba(8,8,12,.78); font-size:7px; letter-spacing:.1em; pointer-events:none; white-space:nowrap; }
 .combat-help kbd { margin:0 4px 0 8px; padding:3px 5px; border:1px solid #55545c; color:#d8ff45; background:#16161b; font:8px Russo; }
 @keyframes ability-ready { to { transform: translateY(-3px); } }
+@keyframes aiming-hud { to { transform:translateX(4px) } }
 
 .ultimate-cinematic {
   position: fixed;

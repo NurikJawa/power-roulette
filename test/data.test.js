@@ -7,9 +7,9 @@ global.window = {};
 require('../public/data.js');
 const { UNIVERSES, UNIVERSAL_ROULETTES, PHASES } = window.POWER_DATA;
 
-test('в каталоге 27 вселенных и присутствуют все заказанные', () => {
-  assert.equal(UNIVERSES.length, 27);
-  for (const id of ['jujutsu', 'gurren', 'eminence', 'attack-titan', 'bleach', 'death-note', 're-zero', 'evangelion', 'slime', 'ragnarok', 'parasyte', 'seven-deadly-sins']) {
+test('в каталоге 33 вселенные и присутствуют все заказанные', () => {
+  assert.equal(UNIVERSES.length, 33);
+  for (const id of ['jujutsu', 'gurren', 'eminence', 'attack-titan', 'bleach', 'death-note', 're-zero', 'evangelion', 'slime', 'ragnarok', 'parasyte', 'seven-deadly-sins', 'overlord', 'misfit', 'hellsing', 'gachiakuta', 'frieren', 'fate']) {
     assert.ok(UNIVERSES.some(universe => universe.id === id), `Нет вселенной ${id}`);
   }
 });
@@ -88,4 +88,13 @@ test('Тетрадь смерти использует ручной выбор �
   assert.match(source, /at:b\.time\+40/);
   assert.match(source, /remaining>5/);
   assert.match(source, /deathNoteUsed/);
+});
+
+test('способность E удерживается для прицела и отправляет сетевые координаты', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
+  assert.match(source, /function startPowerAim\(\)/);
+  assert.match(source, /function drawPowerPreview\(\)/);
+  assert.match(source, /send\(\{type:"power_request",x,y\}\)/);
+  assert.match(source, /event\.code==="KeyE"/);
+  assert.match(source, /releasePowerAim\(\)/);
 });

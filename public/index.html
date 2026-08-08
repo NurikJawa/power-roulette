@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b0b0e">
   <title>Рулетка силы — мультивселенная</title>
-  <meta name="description" content="Собери случайного бойца из 27 вселенных и активируй его уникальную ульту в сетевой битве.">
+  <meta name="description" content="Собери случайного бойца из 33 вселенных и активируй его уникальную ульту в сетевой битве.">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="wheel-fix.css">
   <link rel="stylesheet" href="action-fx.css">
@@ -21,7 +21,7 @@
       </nav>
       <div class="menu-grid">
         <div class="hero">
-          <p class="kicker"><i></i> 27 ВСЕЛЕННЫХ · 11 РУЛЕТОК · ОДНА АРЕНА</p>
+          <p class="kicker"><i></i> 33 ВСЕЛЕННЫЕ · 11 РУЛЕТОК · ОДНА АРЕНА</p>
           <h1>КЕМ ТЫ<br><span>СТАНЕШЬ?</span></h1>
           <p class="hero-text">Сначала судьба выбирает вселенную. Потом — её расу, силу и один из пяти ультимейтов. Семь общих рулеток завершают бойца, а дальше остаётся только выжить.</p>
           <div id="universeTicker" class="universe-ticker"></div>
@@ -98,7 +98,7 @@
         <section class="arena-shell">
           <div class="arena-head"><span><i></i> БОЙ ИДЁТ</span><b id="battleTimer">00:00</b><em id="zoneStatus">ЗОНА: СТАБИЛЬНА</em></div>
           <canvas id="arena" width="1100" height="680"></canvas>
-          <div class="combat-help"><kbd>ЛКМ</kbd> УДАР В КУРСОР <kbd>E</kbd> СПОСОБНОСТЬ <kbd>F</kbd> УЛЬТА</div>
+          <div class="combat-help"><kbd>ЛКМ</kbd> УДАР В КУРСОР <kbd>E</kbd> ЗАЖАТЬ — ПРИЦЕЛ / ОТПУСТИТЬ — КАСТ <kbd>F</kbd> УЛЬТА</div>
           <div id="skillHud" class="ability-hud skill-hud hidden">
             <div class="ability-icon"><img id="skillIcon" src="" alt=""><kbd>E</kbd></div>
             <div class="ability-info"><small>УНИКАЛЬНАЯ СПОСОБНОСТЬ</small><b id="skillName">—</b><div class="ability-bar"><i id="skillBar"></i></div><span id="skillStatus">ГОТОВО</span></div>
@@ -119,7 +119,7 @@
     </section>
   </main>
 
-  <div id="rulesModal" class="overlay hidden"><article class="modal"><button class="modal-x" data-close-rules>×</button><p class="kicker"><i></i> ПРАВИЛА</p><h2>СУДЬБА СОБИРАЕТ.<br>АРЕНА ПРОВЕРЯЕТ.</h2><ol><li>Колесо выбирает одну из 27 вселенных.</li><li>Следующие колёса используют только расы, силы и пять ультимейтов выпавшей вселенной.</li><li>Четвёртый этап выбирает личный ультимейт на F, затем выпадают семь общих характеристик.</li><li>Движение автоматическое. ЛКМ направляет обычный удар, E активирует выпавшую способность, F — выпавшую ульту.</li><li>У владельца Тетради смерти F открывает дневник: выбранный живой соперник погибает через 40 секунд.</li><li>Рывок не является общей командой: он доступен только способностям с механикой рывка. После 50 секунд зона сужается.</li></ol><button class="primary" data-close-rules><span>ПОНЯТНО</span><b>→</b></button></article></div>
+  <div id="rulesModal" class="overlay hidden"><article class="modal"><button class="modal-x" data-close-rules>×</button><p class="kicker"><i></i> ПРАВИЛА</p><h2>СУДЬБА СОБИРАЕТ.<br>АРЕНА ПРОВЕРЯЕТ.</h2><ol><li>Колесо выбирает одну из 33 вселенных.</li><li>Следующие колёса используют только расы, силы и пять ультимейтов выпавшей вселенной.</li><li>Четвёртый этап выбирает личный ультимейт на F, затем выпадают семь общих характеристик.</li><li>Движение автоматическое. ЛКМ направляет обычный удар; зажми E, наведи траекторию и отпусти для способности; F — выпавшая ульта.</li><li>У владельца Тетради смерти F открывает дневник: выбранный живой соперник погибает через 40 секунд.</li><li>Рывок не является общей командой: он доступен только способностям с механикой рывка. После 50 секунд зона сужается.</li></ol><button class="primary" data-close-rules><span>ПОНЯТНО</span><b>→</b></button></article></div>
 
   <div id="buildModal" class="overlay hidden"><article class="modal build-modal"><button class="modal-x" id="closeBuild">×</button><p class="kicker"><i></i> ПАСПОРТ БОЙЦА</p><h2 id="buildName">МОЯ СБОРКА</h2><div id="buildContent" class="build-content"></div></article></div>
 

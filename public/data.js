@@ -3,11 +3,11 @@
 const icon = name => `assets/icons/${name}.png`;
 const raceIcon = name => {
   const value = name.toLowerCase();
-  if (/титан|великан|дракон|монстр|ному|химера/.test(value)) return 'race-giant';
-  if (/демон|проклят|пуст|арранкар|гуль|дух|гомункул/.test(value)) return 'race-demon';
+  if (/титан|великан|дракон|монстр|ному|химера|гетероморф/.test(value)) return 'race-giant';
+  if (/демон|проклят|пуст|арранкар|гуль|дух|гомункул|нежить|паразит|оборотень/.test(value)) return 'race-demon';
   if (/андроид|ганмен|антиспираль/.test(value)) return 'race-machine';
-  if (/вампир|бог смерти|синигами|квинси|эспер|эльф|маг|оцуцуки|лунариан/.test(value)) return 'race-mystic';
-  if (/аккерман|саян|охотник|истребитель|золдик|шиноби|воин|следователь|шифтер/.test(value)) return 'race-fighter';
+  if (/вампир|бог|синигами|квинси|эспер|эльф|маг|оцуцуки|лунариан|слуга/.test(value)) return 'race-mystic';
+  if (/аккерман|саян|охотник|истребитель|золдик|шиноби|воин|следователь|шифтер|чистильщик|даритель|регенератор/.test(value)) return 'race-fighter';
   return 'race-human';
 };
 const race = (name, hp, damage, speed, size, armor, trait) => ({ name, hp, damage, speed, size, armor, trait, icon: icon(raceIcon(name)) });
@@ -121,7 +121,31 @@ const UNIVERSES = [
 
   universe('seven-deadly-sins','Семь смертных грехов','Демоны, богини, феи и священные сокровища','#b96cff','seven-deadly-sins',[
     race('Человек',.96,.97,1.04,.98,.01,'Стабильный рыцарь'),race('Демон',1.16,1.09,.96,1.07,.09,'Тьма и высокая живучесть'),race('Богиня',1.07,1.04,1.05,1.02,.07,'Свет и магическая защита'),race('Фея',.95,1.02,1.12,.88,.03,'Маленькая и быстрая цель'),race('Великан',1.27,1.11,.82,1.29,.08,'Огромные HP и сила')],[
-    power('full-counter','Full Counter',35,4.8,210,'counter','Отражает силу направленной атаки обратно.',{dodge:.18}),power('snatch','Snatch',32,4.2,260,'drain','Крадёт физическую силу и здоровье цели.',{lifesteal:.48}),power('disaster','Disaster',40,5.5,320,'area','Управляет природой и усиливает разрушение.',{area:135}),power('creation','Creation',39,5,280,'projectile','Земля превращается в массивное оружие.'),power('infinity','Infinity',44,6.1,360,'beam','Заклинание Мерлин поддерживает разрушительный поток.',{armorPen:.4})])
+    power('full-counter','Full Counter',35,4.8,210,'counter','Отражает силу направленной атаки обратно.',{dodge:.18}),power('snatch','Snatch',32,4.2,260,'drain','Крадёт физическую силу и здоровье цели.',{lifesteal:.48}),power('disaster','Disaster',40,5.5,320,'area','Управляет природой и усиливает разрушение.',{area:135}),power('creation','Creation',39,5,280,'projectile','Земля превращается в массивное оружие.'),power('infinity','Infinity',44,6.1,360,'beam','Заклинание Мерлин поддерживает разрушительный поток.',{armorPen:.4})]),
+
+  universe('overlord','Overlord','Назарик, магия сверхранга и гетероморфы','#a88bff','overlord',[
+    race('Человек',.94,.96,1.04,.98,.01,'Подвижный авантюрист'),race('Нежить',1.16,1.07,.94,1.07,.09,'Не чувствует боли и хорошо держит урон'),race('Вампир',1.11,1.08,1.04,1.01,.06,'Скорость и вампиризм'),race('Демон',1.15,1.08,.98,1.06,.09,'Магическая броня'),race('Гетероморф',1.2,1.09,.91,1.12,.1,'Крупное нечеловеческое тело')],[
+    power('grasp-heart','Grasp Heart',43,5.8,330,'precision','Призрачная ладонь сжимает сердце отмеченной цели.',{crit:.22}),power('reality-slash','Reality Slash',47,6.2,410,'beam','Пространственный разрез частично игнорирует броню.',{armorPen:.72}),power('fallen-down','Fallen Down',50,7.2,390,'area','Свет сверхранговой магии взрывается в выбранной точке.',{area:145}),power('shalltear-lance','Кровавая пика Шалтир',38,4.3,170,'drain','Алое копьё пробивает врага и возвращает здоровье.',{lifesteal:.48,armorPen:.28}),power('cocytus-frost','Ледяная аура Коцита',35,4.9,280,'control','Морозная волна сковывает цель и замедляет её.',{stun:1.15,area:100})]),
+
+  universe('misfit','Непризнанный школой владыка демонов','Истоки, демонические глаза и магия эпох','#ff4b7d','misfit',[
+    race('Человек',.94,.96,1.05,.98,.01,'Быстрый, но хрупкий'),race('Демон',1.14,1.08,.99,1.05,.08,'Сильный магический источник'),race('Гибрид',1.04,1.03,1.05,1,.04,'Баланс крови и магии'),race('Дух',1.02,1.06,1.08,.94,.05,'Маленькая мистическая цель'),race('Бог',1.18,1.09,.94,1.1,.11,'Высокая броня и запас жизни')],[
+    power('jio-graze','Jio Graze',46,6,390,'beam','Чёрное пламя испаряет пространство по линии взгляда.',{armorPen:.38,dot:6}),power('ingall','Ingall',31,5.2,240,'heal','Магия истока восстанавливает тело после ответного удара.',{heal:72}),power('demon-eyes','Демонические глаза разрушения',34,5.6,360,'control','Взгляд ломает поток магии и останавливает цель.',{stun:1.3,shieldBreak:true}),power('venu-zdonoa','Venuzdonoa',49,6.7,180,'melee','Меч разрушает законы и пробивает почти всю броню.',{armorPen:.86}),power('source-reversal','Обращение истока',36,4.8,260,'counter','Переворачивает вражескую магию и отвечает импульсом.',{dodge:.22})]),
+
+  universe('hellsing','Hellsing','Вампиры, Искариот и оружие организации','#d93845','hellsing',[
+    race('Человек',.94,.97,1.04,.98,.02,'Военная подготовка'),race('Вампир',1.14,1.08,1.04,1.04,.07,'Кровь лечит раны'),race('Искусственный вампир',1.07,1.05,1.06,1.01,.05,'Высокая скорость'),race('Регенератор',1.16,1.03,.97,1.06,.09,'Очень стойкое тело'),race('Оборотень',1.18,1.1,1.02,1.09,.08,'Сила и резкий рывок')],[
+    power('casull-jackal','Casull & Jackal',38,3.8,430,'projectile','Два крупнокалиберных выстрела оставляют длинные трассеры.',{multi:2,armorPen:.38}),power('alucard-regeneration','Регенерация Алукарда',32,5.2,210,'drain','Теневая плоть поглощает кровь цели.',{lifesteal:.62}),power('black-dog','Баскервиль',40,5.9,270,'area','Тень принимает форму челюстей и кусает в выбранной области.',{area:120,lifesteal:.2}),power('harkonnen','Harkonnen',49,6.6,470,'beam','Противотанковая пушка Серас пробивает линию насквозь.',{armorPen:.76}),power('anderson-bayonets','Святые штыки Андерсона',37,4.2,290,'projectile','Освящённые лезвия летят веером по направлению взгляда.',{multi:3})]),
+
+  universe('gachiakuta','Gachiakuta','Чистильщики, рейдеры и жизненные инструменты','#d8f044','gachiakuta',[
+    race('Житель Сферы',.95,.96,1.05,.98,.01,'Лёгкий и подвижный'),race('Племенной',1.02,1.03,1.04,1,.03,'Выживает среди отбросов'),race('Житель Земли',1.05,1.02,1,1.02,.04,'Закалён опасным миром'),race('Даритель',1.04,1.07,1.05,1,.04,'Оживляет дорогой предмет'),race('Чистильщик',1.08,1.05,1.04,1.02,.05,'Опыт против мусорных тварей')],[
+    power('rudo-3r','3R Рудо',40,4.7,260,'projectile','Перчатки оживляют выброшенный предмет и запускают его по траектории.',{armorPen:.42}),power('enjin-umbrella','Зонт Энджина',39,4.5,180,'area','Раскрытый жизненный инструмент сметает область порывом.',{area:115,knockback:255}),power('zanka-stick','Посох Занки',37,3.8,175,'melee','Точный длинный удар посохом по направлению взгляда.'),power('riyo-ripper','The Ripper Риё',42,4.4,190,'dash','Ножницы на ногах оставляют две граффити-дуги.',{multi:2,armorPen:.34}),power('jabber-mankira','Mankira Джаббера',34,5.3,160,'dot','Кольца превращаются в когти с нейротоксином.',{dot:10,stun:.65})]),
+
+  universe('frieren','Провожающая в последний путь Фрирен','Эльфы, маги, воины и демоны','#79d9ff','frieren',[
+    race('Человек',.95,.97,1.04,.98,.01,'Короткая жизнь, быстрый рост'),race('Эльф',1.01,1.07,1.04,.98,.05,'Тысячелетний запас знаний'),race('Дворф',1.16,1.05,.9,1.08,.1,'Выносливый передовой боец'),race('Маг',.98,1.08,1.03,.97,.03,'Точный контроль маны'),race('Демон',1.11,1.09,.99,1.04,.07,'Магия скрыта за словами')],[
+    power('zoltraak','Zoltraak',42,4.6,440,'beam','Быстрый луч убийственной магии летит по линии взгляда.',{armorPen:.48}),power('frieren-defense','Защитная магия',28,4.9,250,'shield','Шестиугольный барьер принимает удар и отвечает импульсом.',{shield:108}),power('mana-suppression','Скрытие маны',30,4.5,350,'precision','Скрывает присутствие и открывает слабое место цели.',{crit:.25}),power('ubel-cleave','Рассекающая магия Юбель',44,5.5,280,'beam','Разрезает всё, что владелец способен представить разрезанным.',{armorPen:.7}),power('stark-strike','Удар Штарка',41,4.3,170,'dash','Тяжёлый топорный удар раскалывает землю.',{knockback:270})]),
+
+  universe('fate','Fate/stay night','Маги, слуги и Благородные фантазмы','#f2ca55','fate',[
+    race('Человек',.94,.96,1.04,.98,.01,'Обычный участник войны'),race('Маг',.98,1.04,1.04,.98,.03,'Магические цепи и усиление'),race('Слуга',1.12,1.08,1.04,1.04,.07,'Духовное тело героя'),race('Гомункул',1.08,1.03,.97,1.02,.06,'Большой запас магической энергии'),race('Божественный дух',1.18,1.09,.94,1.09,.1,'Редкая мистическая природа')],[
+    power('excalibur','Excalibur',50,7,460,'beam','Золотой поток святого меча проходит по линии взгляда.',{armorPen:.42}),power('gae-bolg','Gáe Bolg',45,5.8,310,'precision','Алое копьё стремится к сердцу отмеченной цели.',{crit:.28,armorPen:.58}),power('rho-aias','Rho Aias',28,5.1,250,'shield','Семислойный цветочный щит гасит попадание.',{shield:118}),power('gate-babylon','Gate of Babylon',39,5.2,400,'projectile','Золотые порталы выпускают веер клинков.',{multi:4}),power('mystic-eyes','Мистические глаза оцепенения',32,5.4,330,'control','Магический взгляд задерживает противника.',{stun:1.3})])
 ];
 
 const ULTIMATES = {
@@ -151,7 +175,13 @@ const ULTIMATES = {
   'slime': {id:'ultimate-slime',name:'ПРОБУЖДЕНИЕ ВЛАДЫКИ ДЕМОНОВ',cooldown:35,duration:8,type:'berserk',damage:1.42,speed:1.25,heal:.26,description:'Харвест-фестиваль полностью перестраивает тело.'},
   'ragnarok': {id:'ultimate-ragnarok',name:'ГЕЙРРЁД: МОЛОТ ТОРА',cooldown:37,duration:2,type:'nova',damage:184,description:'Пробуждённый Мьёльнир возвращается сокрушительным броском.'},
   'parasyte': {id:'ultimate-parasyte',name:'ПОЛНОЕ РАСКРЫТИЕ МИГИ',cooldown:31,duration:7,type:'bladeStorm',damage:30,description:'Органические лезвия атакуют со всех сторон.'},
-  'seven-deadly-sins': {id:'ultimate-seven-deadly-sins',name:'ASSAULT MODE',cooldown:34,duration:8,type:'berserk',damage:1.46,speed:1.28,heal:.15,description:'Демоническая метка высвобождает полную силу.'}
+  'seven-deadly-sins': {id:'ultimate-seven-deadly-sins',name:'ASSAULT MODE',cooldown:34,duration:8,type:'berserk',damage:1.46,speed:1.28,heal:.15,description:'Демоническая метка высвобождает полную силу.'},
+  'overlord': {id:'ultimate-overlord',name:'THE GOAL OF ALL LIFE IS DEATH',cooldown:39,duration:4,type:'execute',damage:232,description:'Часы смерти усиливают следующую магию и поражают слабейшую цель.'},
+  'misfit': {id:'ultimate-misfit',name:'VENUZDONOA: ЗАКОН РАЗРУШЕН',cooldown:38,duration:2.2,type:'nova',damage:188,description:'Меч уничтожает порядок мира ударной волной.'},
+  'hellsing': {id:'ultimate-hellsing',name:'RESTRICTION LEVEL ZERO',cooldown:37,duration:8,type:'berserk',damage:1.48,speed:1.27,heal:.3,description:'Все ограничения сняты, теневая плоть и оружие достигают предела.'},
+  'gachiakuta': {id:'ultimate-gachiakuta',name:'3R: FULL POTENTIAL',cooldown:35,duration:5,type:'bladeStorm',damage:31,description:'Оживлённый мусор превращается в серию огромных жизненных инструментов.'},
+  'frieren': {id:'ultimate-frieren',name:'ЗАЛП ZOLTRAAK',cooldown:35,duration:5,type:'bladeStorm',damage:30,description:'Сотни точных лучей перекрёстно прошивают арену.'},
+  'fate': {id:'ultimate-fate',name:'UNLIMITED BLADE WORKS',cooldown:38,duration:5,type:'bladeStorm',damage:32,description:'Реальность меняется на бесконечную кузницу клинков.'}
 };
 
 for (const item of UNIVERSES) {
@@ -295,7 +325,37 @@ const EXTRA_ULTIMATES = {
     ultimate('sds-revenge','REVENGE COUNTER','nova',186,38,2,'Накопленный урон возвращается ударной волной.',{visual:'blackBlade'}),
     ultimate('sds-the-one','THE ONE','berserk',1.52,36,6,'Солнце на короткое время доводит силу до пика.',{speed:1.2,heal:.16,visual:'sun'}),
     ultimate('sds-sacred','СВЯЩЕННОЕ СОКРОВИЩЕ','bladeStorm',31,33,5,'Истинная форма сокровища создаёт серию атак.',{visual:'sacredBlade'}),
-    ultimate('sds-chaos','ХАОС КАМЕЛОТА','domain',15,38,5,'Хаос меняет реальность и запирает ближайшую цель.',{tickRate:.5,cage:true,stun:true,visual:'chaosCage'})]
+    ultimate('sds-chaos','ХАОС КАМЕЛОТА','domain',15,38,5,'Хаос меняет реальность и запирает ближайшую цель.',{tickRate:.5,cage:true,stun:true,visual:'chaosCage'})],
+  'overlord':[
+    ultimate('overlord-fallen','FALLEN DOWN','nova',180,38,2.4,'Столб сверхрангового света выжигает центр арены.',{visual:'fallenDown'}),
+    ultimate('overlord-perfect','PERFECT WARRIOR','buff',1.4,32,8,'Айнз меняет магию на мастерство вооружённого воина.',{speed:1.3,dodge:.12,visual:'goldArmor'}),
+    ultimate('overlord-time','TIME STOP: DELAY MAGIC','timeStop',48,37,4,'Остановленное время заканчивается отложенным взрывом.',{visual:'deathClock'}),
+    ultimate('overlord-world','МИРОВОЙ ПРЕДМЕТ','domain',15,38,5,'Красная сфера запирает ближайшего противника в изменённой реальности.',{tickRate:.5,cage:true,stun:true,visual:'worldCage'})],
+  'misfit':[
+    ultimate('misfit-chaos-eyes','ГЛАЗА ХАОТИЧЕСКОГО РАЗРУШЕНИЯ','sharingan',0,36,7,'Разрушительный взгляд читает и замедляет магию врагов.',{slow:.48,dodge:.24,visual:'chaosEyes'}),
+    ultimate('misfit-jio','JIO GRAZE ANNIHILATION','nova',181,37,2.2,'Чёрное солнце обрушивает поток уничтожающего пламени.',{visual:'blackSun'}),
+    ultimate('misfit-source','ВОЗРОЖДЕНИЕ ИСТОКА','alchemy',1.25,35,8,'Повреждённый исток возвращается с лечением и магическим щитом.',{heal:245,shield:125,visual:'sourceRune'}),
+    ultimate('misfit-king','ВЛАДЫКА ДЕМОНОВ','berserk',1.49,35,7,'Древняя демоническая сила ускоряет каждое заклинание.',{speed:1.36,heal:.16,visual:'demonAura'})],
+  'hellsing':[
+    ultimate('hellsing-jackal','JACKAL EXECUTION','bladeStorm',32,33,5,'Крупнокалиберные трассеры прошивают арену с разных углов.',{visual:'bulletStorm'}),
+    ultimate('hellsing-monster','МОНСТР БОГА','berserk',1.47,35,7,'Святые лозы и регенерация превращают тело в живое оружие.',{speed:1.25,heal:.24,visual:'holyThorns'}),
+    ultimate('hellsing-schrodinger','SCHRÖDINGER','buff',1.3,34,9,'Владелец существует повсюду и уклоняется от почти невозможных атак.',{speed:1.5,dodge:.27,visual:'catEyes'}),
+    ultimate('hellsing-souls','МОРЕ ПОГЛОЩЁННЫХ ДУШ','domain',15,38,5,'Тени павших закрывают ближайшего врага в кровавой клетке.',{tickRate:.5,cage:true,stun:true,visual:'bloodCage'})],
+  'gachiakuta':[
+    ultimate('gachiakuta-umbrella','UMBREAKER','nova',168,34,2,'Гигантский зонт ударяет сверху граффити-взрывом.',{visual:'graffitiBurst'}),
+    ultimate('gachiakuta-ripper','THE RIPPER: DANCE','bladeStorm',30,32,5,'Ножницы Риё рисуют вокруг врагов режущие цветные дуги.',{visual:'graffitiSlash'}),
+    ultimate('gachiakuta-mankira','MANKIRA: НЕЙРОТОКСИН','domain',15,36,5,'Ядовитые когти закрывают ближайшего противника в зелёной клетке.',{tickRate:.5,cage:true,stun:true,visual:'toxicCage'}),
+    ultimate('gachiakuta-giver','ЖИЗНЕННЫЙ ИНСТРУМЕНТ','buff',1.4,31,8,'Связь с предметом усиливает урон и скорость владельца.',{speed:1.38,dodge:.1,visual:'trashAura'})],
+  'frieren':[
+    ultimate('frieren-serie','ЖИВАЯ КНИГА ЗАКЛИНАНИЙ','buff',1.42,34,8,'Знание Зерие ускоряет каст и повышает точность магии.',{speed:1.35,dodge:.17,visual:'goldMana'}),
+    ultimate('frieren-aura','ВЕСЫ ПОСЛУШАНИЯ','domain',15,37,5,'Золотые весы подавляют ману и запирают ближайшую цель.',{tickRate:.5,cage:true,stun:true,visual:'scaleCage'}),
+    ultimate('frieren-clone','ИДЕАЛЬНАЯ КОПИЯ','timeStop',46,36,4,'Магическое отражение перекрывает путь и останавливает противников.',{visual:'mirrorMagic'}),
+    ultimate('frieren-pinnacle','ВЕРШИНА МАГИИ','nova',178,38,2.3,'Безымянная волна древней магии сгибает пространство вокруг цели.',{visual:'manaNova'})],
+  'fate':[
+    ultimate('fate-excalibur','EXCALIBUR: ОБЕЩАННАЯ ПОБЕДА','nova',186,38,2.2,'Святой меч выпускает золотую волну через всю арену.',{visual:'excalibur'}),
+    ultimate('fate-enuma','ENUMA ELISH','nova',192,39,2.5,'Вращающийся клинок Ea разрывает пространство красной спиралью.',{visual:'enumaElish'}),
+    ultimate('fate-bolg','GÁE BOLG: КОПЬЁ СМЕРТИ','execute',228,37,4,'Причинность меняется, и алое копьё находит слабейшую цель.',{visual:'gaeBolg'}),
+    ultimate('fate-avalon','AVALON','alchemy',1.22,36,8,'Ножны святого меча лечат владельца и создают совершенную защиту.',{heal:230,shield:165,visual:'avalon'})]
 };
 
 const BATTLE_STYLES = {
@@ -307,7 +367,9 @@ const BATTLE_STYLES = {
   'fullmetal':{weapon:'automail',basic:'alchemy'},'tokyo-ghoul':{weapon:'kagune',basic:'kagune'},'mob':{weapon:'psychic',basic:'psychic'},
   'gurren':{weapon:'drill',basic:'drill'},'eminence':{weapon:'slimeSword',basic:'blade'},'fairy-tail':{weapon:'magicSeal',basic:'magic'},
   're-zero':{weapon:'iceStaff',basic:'magic'},'evangelion':{weapon:'progressiveKnife',basic:'blade'},'slime':{weapon:'slimeBlade',basic:'magic'},
-  'ragnarok':{weapon:'volundr',basic:'fist'},'parasyte':{weapon:'parasiteBlade',basic:'kagune'},'seven-deadly-sins':{weapon:'sacredTreasure',basic:'blade'}
+  'ragnarok':{weapon:'volundr',basic:'fist'},'parasyte':{weapon:'parasiteBlade',basic:'kagune'},'seven-deadly-sins':{weapon:'sacredTreasure',basic:'blade'},
+  'overlord':{weapon:'guildStaff',basic:'magic'},'misfit':{weapon:'venuSword',basic:'blade'},'hellsing':{weapon:'dualPistols',basic:'gun'},
+  'gachiakuta':{weapon:'vitalInstrument',basic:'trash'},'frieren':{weapon:'mageStaff',basic:'magic'},'fate':{weapon:'nobleBlade',basic:'blade'}
 };
 
 for (const item of UNIVERSES) {
