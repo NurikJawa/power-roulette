@@ -1,0 +1,14 @@
+/* Dynamic geometry keeps every option visible, including all 21 universes. */
+.wheel-item {
+  width: min(var(--item-size, 44px), 11vw);
+  height: min(var(--item-size, 44px), 11vw);
+  margin: calc(min(var(--item-size, 44px), 11vw) / -2);
+  transform: rotate(var(--angle))
+    translateY(calc(clamp(90px, 18vw, 170px) * -1))
+    rotate(calc(var(--angle) * -1));
+}
+
+.wheel-item img {
+  width: 75%;
+  height: 75%;
+}

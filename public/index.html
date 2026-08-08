@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0b0e">
+  <title>Рулетка силы — мультивселенная</title>
+  <meta name="description" content="Собери случайного бойца из 21 вселенной и активируй его уникальную ульту в сетевой битве.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="wheel-fix.css">
+  <link rel="stylesheet" href="action-fx.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <main>
+    <section id="menuScreen" class="screen active menu-screen">
+      <nav class="nav">
+        <a class="brand" href="/"><span class="brand-mark">R</span><b>РУЛЕТКА<br>СИЛЫ</b></a>
+        <button class="plain-btn" data-rules>КАК ИГРАТЬ ↗</button>
+      </nav>
+      <div class="menu-grid">
+        <div class="hero">
+          <p class="kicker"><i></i> 21 ВСЕЛЕННАЯ · 10 РУЛЕТОК · ОДНА АРЕНА</p>
+          <h1>КЕМ ТЫ<br><span>СТАНЕШЬ?</span></h1>
+          <p class="hero-text">Сначала судьба выбирает вселенную. Потом — её расу и уникальную силу. Семь общих рулеток завершают бойца, а дальше остаётся только выжить.</p>
+          <div id="universeTicker" class="universe-ticker"></div>
+        </div>
+        <div class="connect-card">
+          <span class="card-no">01 / ВХОД В МУЛЬТИВСЕЛЕННУЮ</span>
+          <h2>СОЗДАЙ<br>БОЙЦА</h2>
+          <label>ТВОЙ НИК</label>
+          <input id="onlineName" maxlength="16" placeholder="Например, Shadow">
+          <label>ЦВЕТ СФЕРЫ</label>
+          <div class="color-line"><input id="onlineColor" type="color" value="#d8ff45"><span>Цвет виден в бою</span></div>
+          <button id="createRoom" class="primary"><span>СОЗДАТЬ КОМНАТУ</span><b>→</b></button>
+          <div class="divider">ИЛИ ВОЙТИ ПО КОДУ</div>
+          <div class="code-row"><input id="roomCodeInput" maxlength="5" placeholder="X7K9P"><button id="joinRoom">→</button></div>
+          <p id="roomMessage" class="room-message">До 10 игроков. Ведущий запускает рулетку.</p>
+        </div>
+      </div>
+      <footer class="menu-footer"><span>FAN PROJECT / POWER SCALE NORMALIZED</span><span><i></i> SERVER ONLINE</span></footer>
+    </section>
+
+    <section id="lobbyScreen" class="screen lobby-screen">
+      <nav class="nav dark"><a class="brand light" href="/"><span class="brand-mark">R</span><b>РУЛЕТКА СИЛЫ</b></a><button class="room-pill" id="copyInvite">ROOM <b id="roomCode">—</b> ⧉</button></nav>
+      <div class="lobby-inner">
+        <p class="kicker light-kicker"><i></i> СБОР БОЙЦОВ</p>
+        <h2>ЖДЁМ<br><span>ВСЕХ</span></h2>
+        <div id="onlinePlayers" class="online-players"></div>
+        <button id="startRoulette" class="primary lobby-start"><span>ЗАПУСТИТЬ РУЛЕТКУ</span><b>⚡</b></button>
+        <p id="lobbyHint">Подключите минимум двух игроков</p>
+      </div>
+    </section>
+
+    <section id="rouletteScreen" class="screen roulette-screen">
+      <header class="topbar">
+        <button class="logo-button" data-home><span>R</span> РУЛЕТКА СИЛЫ</button>
+        <div class="phase"><small id="phaseNumber">ЭТАП 1 ИЗ 10</small><b id="phaseName">ВСЕЛЕННАЯ</b></div>
+        <button id="soundToggle" class="circle-btn">♪</button>
+      </header>
+      <div class="roulette-layout">
+        <aside class="players-panel panel"><span class="eyebrow">ОЧЕРЕДНОСТЬ</span><h3>Участники</h3><div id="turnPlayers"></div></aside>
+        <section class="wheel-stage">
+          <div id="phaseDots" class="phase-dots"></div>
+          <span class="now-label">СЕЙЧАС КРУТИТ</span>
+          <h2 id="currentPlayerName">Игрок</h2>
+          <div class="wheel-wrap"><div class="pointer"></div><div id="wheel" class="wheel"><div id="wheelItems" class="wheel-items"></div><div class="wheel-hub"><span>R</span></div></div></div>
+          <button id="spinButton" class="primary spin-button"><span>КРУТИТЬ КОЛЕСО</span><b>↻</b></button>
+          <p id="spinHint">Каждая вселенная открывает только свои расы и силы</p>
+        </section>
+        <aside class="result-panel panel">
+          <span class="eyebrow">ПОСЛЕДНИЙ РЕЗУЛЬТАТ</span>
+          <div id="emptyResult" class="empty-result"><b>?</b><span>Колесо ещё<br>не выбрало судьбу</span></div>
+          <div id="resultCard" class="result-card hidden"><div class="result-image"><img id="resultImage" alt=""></div><small id="resultType">ВСЕЛЕННАЯ</small><h3 id="resultName">—</h3><p id="resultDescription"></p><div id="resultStats" class="result-stats"></div></div>
+          <button id="openBuild" class="build-button">МОЯ СБОРКА <span>↗</span></button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="battleScreen" class="screen battle-screen">
+      <header class="topbar battle-topbar">
+        <div class="logo-button"><span>R</span> РУЛЕТКА СИЛЫ</div>
+        <div class="phase"><small>ФИНАЛ</small><b>СПОСОБНОСТЬ E · УЛЬТА F</b></div>
+        <div class="battle-actions"><button id="battleSound" class="circle-btn">♪</button><button id="battleSpeed">×1</button></div>
+      </header>
+      <div class="battle-layout">
+        <section class="arena-shell">
+          <div class="arena-head"><span><i></i> БОЙ ИДЁТ</span><b id="battleTimer">00:00</b><em id="zoneStatus">ЗОНА: СТАБИЛЬНА</em></div>
+          <canvas id="arena" width="1100" height="680"></canvas>
+          <div class="combat-help"><kbd>ЛКМ</kbd> УДАР В КУРСОР <kbd>E</kbd> СПОСОБНОСТЬ <kbd>F</kbd> УЛЬТА</div>
+          <div id="skillHud" class="ability-hud skill-hud hidden">
+            <div class="ability-icon"><img id="skillIcon" src="" alt=""><kbd>E</kbd></div>
+            <div class="ability-info"><small>УНИКАЛЬНАЯ СПОСОБНОСТЬ</small><b id="skillName">—</b><div class="ability-bar"><i id="skillBar"></i></div><span id="skillStatus">ГОТОВО</span></div>
+          </div>
+          <div id="abilityHud" class="ability-hud hidden">
+            <div class="ability-icon"><img id="abilityIcon" src="" alt=""><kbd>F</kbd></div>
+            <div class="ability-info"><small>УЛЬТИМЕЙТ ВСЕЛЕННОЙ</small><b id="abilityName">—</b><div class="ability-bar"><i id="abilityBar"></i></div><span id="abilityStatus">ГОТОВО</span></div>
+          </div>
+          <div id="battleBanner" class="battle-banner hidden"><img src="" alt=""><div><small>СОБЫТИЕ</small><b></b><span></span></div></div>
+          <div class="arena-corners"><i></i><i></i><i></i><i></i></div>
+        </section>
+        <aside class="battle-side">
+          <div class="alive-box"><small>В ЖИВЫХ</small><strong id="aliveCount">0</strong></div>
+          <div class="fighters-box panel"><span class="eyebrow">БОЙЦЫ · 1000 BASE HP</span><div id="fightersList"></div></div>
+          <div class="feed-box panel"><span class="eyebrow">ХРОНИКА БОЯ</span><div id="battleFeed"></div></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="rulesModal" class="overlay hidden"><article class="modal"><button class="modal-x" data-close-rules>×</button><p class="kicker"><i></i> ПРАВИЛА</p><h2>СУДЬБА СОБИРАЕТ.<br>АРЕНА ПРОВЕРЯЕТ.</h2><ol><li>Колесо выбирает одну из 21 вселенной.</li><li>Следующие колёса используют только расы и силы выпавшей вселенной.</li><li>Затем выпадают сила тела, IQ, скорость, прочность, рост, опыт и удача.</li><li>Движение автоматическое. ЛКМ направляет обычный удар, E активирует выпавшую способность, F — ульту вселенной.</li><li>Рывок не является общей командой: он доступен только способностям с механикой рывка. После 50 секунд зона сужается.</li></ol><button class="primary" data-close-rules><span>ПОНЯТНО</span><b>→</b></button></article></div>
+
+  <div id="buildModal" class="overlay hidden"><article class="modal build-modal"><button class="modal-x" id="closeBuild">×</button><p class="kicker"><i></i> ПАСПОРТ БОЙЦА</p><h2 id="buildName">МОЯ СБОРКА</h2><div id="buildContent" class="build-content"></div></article></div>
+
+  <div id="winnerModal" class="overlay hidden"><article class="winner-modal"><p class="kicker winner-kicker"><i></i> ПОСЛЕДНИЙ ВЫЖИВШИЙ</p><div id="winnerOrb" class="winner-orb"><i></i><i></i><img src="" alt=""></div><h2 id="winnerName">ПОБЕДИТЕЛЬ</h2><p id="winnerLoadout"></p><div id="matchStats" class="match-stats"></div><button id="playAgain" class="primary"><span>СЫГРАТЬ ЕЩЁ</span><b>↻</b></button></article></div>
+
+  <div id="ultimateCinematic" class="ultimate-cinematic hidden">
+    <div class="ultimate-speedlines"></div><div class="ultimate-ring ring-one"></div><div class="ultimate-ring ring-two"></div>
+    <div class="ultimate-core"><img id="ultimateImage" src="" alt=""><small id="ultimateOwner">ИГРОК</small><h2 id="ultimateName">ULTIMATE</h2><p id="ultimateDescription"></p></div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

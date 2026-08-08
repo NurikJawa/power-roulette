@@ -1,0 +1,79 @@
+.ability-hud {
+  position: absolute;
+  left: 28px;
+  bottom: 28px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 285px;
+  padding: 10px 14px 10px 10px;
+  color: #fff;
+  background: rgba(8, 8, 12, .9);
+  border: 1px solid #4b4b54;
+  box-shadow: 6px 6px 0 rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+}
+
+.ability-icon { position: relative; width: 58px; height: 58px; display: grid; place-items: center; background: #24242c; border: 2px solid var(--ability-color, #d8ff45); }
+.ability-icon img { width: 49px; height: 49px; object-fit: contain; }
+.ability-icon kbd { position: absolute; right: -7px; bottom: -7px; width: 25px; height: 25px; display: grid; place-items: center; border: 2px solid #08080b; background: var(--ability-color, #d8ff45); color: #111; font: 14px Russo; box-shadow: none; }
+.ability-info { flex: 1; min-width: 0; }
+.ability-info small { display: block; color: #777780; font-size: 7px; letter-spacing: .14em; }
+.ability-info b { display: block; margin: 4px 0 7px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 12px Russo; }
+.ability-info span { display: block; margin-top: 4px; color: var(--ability-color, #d8ff45); font-size: 7px; letter-spacing: .12em; font-weight: 700; }
+.ability-bar { height: 5px; background: #35353c; overflow: hidden; }
+.ability-bar i { display: block; width: 100%; height: 100%; background: var(--ability-color, #d8ff45); transition: width .08s linear; }
+.ability-hud.ready { animation: ability-ready .7s infinite alternate; }
+.ability-hud.ready .ability-icon { box-shadow: 0 0 24px color-mix(in srgb, var(--ability-color) 70%, transparent); }
+.ability-hud { cursor: pointer; user-select: none; }
+.ability-hud.disabled { opacity: .45; filter: grayscale(1); cursor: default; }
+.skill-hud { bottom: 112px; }
+#arena { cursor: crosshair; }
+.combat-help { position:absolute; top:48px; left:50%; z-index:7; transform:translateX(-50%); padding:7px 10px; color:#94939a; background:rgba(8,8,12,.78); font-size:7px; letter-spacing:.1em; pointer-events:none; white-space:nowrap; }
+.combat-help kbd { margin:0 4px 0 8px; padding:3px 5px; border:1px solid #55545c; color:#d8ff45; background:#16161b; font:8px Russo; }
+@keyframes ability-ready { to { transform: translateY(-3px); } }
+
+.ultimate-cinematic {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: #fff;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ultimate-color, #9b65ff) 55%, #08080c) 0, #08080c 64%);
+  animation: cinematic-in 1.9s both;
+  pointer-events: none;
+}
+.ultimate-cinematic::before,.ultimate-cinematic::after { content:""; position:absolute; inset:-30%; background:conic-gradient(from 0deg,transparent 0 8%,rgba(255,255,255,.11) 8% 9%,transparent 9% 20%); animation:cinematic-spin 2.2s linear infinite; }
+.ultimate-cinematic::after { animation-direction:reverse; animation-duration:3.3s; opacity:.45; }
+.ultimate-speedlines { position:absolute; inset:0; opacity:.3; background:repeating-conic-gradient(from 0deg at 50% 50%,transparent 0 .7deg,#fff .8deg 1deg,transparent 1.1deg 3.4deg); transform:scale(1.8); animation:speed-pulse .24s infinite alternate; }
+.ultimate-ring { position:absolute; width:62vmin; aspect-ratio:1; border:3px solid var(--ultimate-color,#9b65ff); border-radius:50%; box-shadow:0 0 45px var(--ultimate-color,#9b65ff),inset 0 0 45px var(--ultimate-color,#9b65ff); }
+.ring-one { animation:ring-expand 1.1s infinite; }.ring-two { animation:ring-expand 1.1s .55s infinite; }
+.ultimate-core { position:relative; z-index:3; display:grid; justify-items:center; text-align:center; width:min(800px,90vw); }
+.ultimate-core img { width:min(34vmin,300px); height:min(34vmin,300px); object-fit:contain; filter:drop-shadow(0 0 30px var(--ultimate-color,#9b65ff)); animation:icon-impact 1.7s cubic-bezier(.16,.8,.2,1) both; }
+.ultimate-core small { margin-top:14px; color:var(--ultimate-color,#d8ff45); font-size:10px; letter-spacing:.25em; font-weight:700; }
+.ultimate-core h2 { margin:8px 0; font:clamp(37px,7vw,94px)/.88 Russo; letter-spacing:-.055em; text-shadow:5px 5px 0 #000; }
+.ultimate-core p { max-width:560px; margin:0; color:#c9c8cf; font-size:13px; }
+.ultimate-cinematic.naruto { --ultimate-color:#ff2929; background:radial-gradient(circle,#a90000 0,#280306 48%,#050507 78%); }
+.ultimate-cinematic.naruto .ultimate-core img { width:min(47vmin,430px);height:min(47vmin,430px);filter:brightness(0) drop-shadow(0 0 12px #000);animation:sharingan-spin 1.8s cubic-bezier(.2,.75,.15,1) both; }
+.ultimate-cinematic.jojo { --ultimate-color:#f3cf45; filter:saturate(.25) contrast(1.45); }
+.ultimate-cinematic.jujutsu,.ultimate-cinematic.eminence { --ultimate-color:#8b5cff; }
+.ultimate-cinematic.dragon-ball,.ultimate-cinematic.gurren { --ultimate-color:#ffe331; }
+.ultimate-cinematic.attack-titan { --ultimate-color:#ff5b44; animation:cinematic-in 1.9s both,screen-shake .08s 12; }
+.ultimate-cinematic.bleach .ultimate-speedlines { opacity:.7; animation-duration:.09s; }
+.ultimate-cinematic.eminence { background:radial-gradient(circle,#f7f0ff 0,#7a27e8 8%,#210047 45%,#050507 76%); }
+.ultimate-cinematic.opm { background:radial-gradient(circle,#fff 0,#ffdd3d 8%,#d81919 38%,#050507 76%); }
+@keyframes cinematic-in { 0%{opacity:0;clip-path:inset(50% 0)} 12%{opacity:1;clip-path:inset(0)} 78%{opacity:1} 100%{opacity:0} }
+@keyframes cinematic-spin { to{transform:rotate(360deg)} }
+@keyframes speed-pulse { to{opacity:.5;transform:scale(2)} }
+@keyframes ring-expand { 0%{transform:scale(.25);opacity:0} 25%{opacity:1} 100%{transform:scale(1.5);opacity:0} }
+@keyframes icon-impact { 0%{transform:scale(4) rotate(-25deg);opacity:0} 35%{transform:scale(.88) rotate(4deg);opacity:1} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+@keyframes sharingan-spin { 0%{transform:scale(4) rotate(-600deg);opacity:0} 28%{opacity:1} 70%{transform:scale(1) rotate(30deg)} 100%{transform:scale(1.4) rotate(180deg)} }
+@keyframes screen-shake { 25%{transform:translate(8px,-5px)} 75%{transform:translate(-7px,6px)} }
+
+.arena-shell.impact { animation:arena-impact .3s linear; }
+@keyframes arena-impact { 20%{transform:translate(7px,-4px)} 40%{transform:translate(-6px,5px)} 60%{transform:translate(5px,3px)} 80%{transform:translate(-3px,-4px)} }
+
+@media(max-width:620px){.ability-hud{left:13px;bottom:13px;min-width:220px;padding:7px}.skill-hud{bottom:82px}.ability-icon{width:45px;height:45px}.ability-icon img{width:37px;height:37px}.ability-info b{font-size:9px}.ultimate-core p{font-size:10px}.ultimate-core h2{font-size:clamp(30px,11vw,55px)}}
