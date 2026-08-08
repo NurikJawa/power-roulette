@@ -1,4 +1,4 @@
-/* Dynamic geometry keeps every option visible, including all 21 universes. */
+/* Dynamic geometry keeps every option visible, including all 27 universes. */
 .wheel-item {
   width: min(var(--item-size, 44px), 11vw);
   height: min(var(--item-size, 44px), 11vw);

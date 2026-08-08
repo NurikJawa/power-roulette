@@ -97,7 +97,31 @@ const UNIVERSES = [
 
   universe('fairy-tail','Fairy Tail','Маги, драконы и духи','#e8679c','fairy-tail',[
     race('Человек',1,1,1,1,.02,'Стабильный маг'),race('Убийца драконов',1.1,1.08,1.03,1.03,.05,'Сильное тело и стихия'),race('Демон Эфира',1.14,1.07,.96,1.07,.08,'Высокая живучесть'),race('Дракон',1.24,1.1,.84,1.24,.1,'Много HP, большая цель')],[
-    power('fire-dragon','Рёв огненного дракона',40,5,330,'beam','Огненное дыхание с ожогом.',{dot:6}),power('ice-make','Ice Make',34,4.2,260,'control','Лёд замедляет и ранит.',{stun:.8}),power('requip','Requip: Доспех',31,4.5,160,'shield','Смена доспеха даёт щит и удар.',{shield:80}),power('heavenly-body','Магия небесных тел',43,5.8,360,'projectile','Быстрая звёздная атака.'),power('fairy-law','Fairy Law',51,8,300,'area','Редкая мощная атака по области.',{area:155})])
+    power('fire-dragon','Рёв огненного дракона',40,5,330,'beam','Огненное дыхание с ожогом.',{dot:6}),power('ice-make','Ice Make',34,4.2,260,'control','Лёд замедляет и ранит.',{stun:.8}),power('requip','Requip: Доспех',31,4.5,160,'shield','Смена доспеха даёт щит и удар.',{shield:80}),power('heavenly-body','Магия небесных тел',43,5.8,360,'projectile','Быстрая звёздная атака.'),power('fairy-law','Fairy Law',51,8,300,'area','Редкая мощная атака по области.',{area:155})]),
+
+  universe('re-zero','Re:Zero','Возвращение смертью, духи и ведьмины факторы','#75c8ff','re-zero',[
+    race('Человек',.96,.97,1.05,.98,.01,'Быстрый, но уязвимый'),race('Полуэльф',1.02,1.02,1.03,1,.04,'Сродство с магией и духами'),race('Они',1.12,1.1,1.02,1.04,.05,'Рог усиливает тело'),race('Великий дух',1.1,1.07,.98,1.03,.09,'Сильная магическая защита'),race('Зверолюд',1.05,1.04,1.09,.98,.03,'Высокая скорость')],[
+    power('return-by-death','Возвращение смертью',27,6.8,220,'counter','Предчувствие роковой атаки даёт уклонение и ответный удар.',{dodge:.24}),power('invisible-providence','Невидимая длань',37,4.6,230,'control','Невидимая рука хватает и отбрасывает цель.',{knockback:270}),power('el-huma','Эль Хума',42,5.6,350,'projectile','Ледяные копья пробивают цель и замедляют её.',{stun:.65}),power('oni-blood','Кровь Они',39,4.2,120,'melee','Рог Они превращает удар в тяжёлый таран.',{knockback:235}),power('shamak','Шамак',30,5.2,300,'control','Тёмная завеса лишает цель ориентации.',{stun:1.15})]),
+
+  universe('evangelion','Evangelion','Евы, ангелы и абсолютные поля страха','#c8ff3e','evangelion',[
+    race('Пилот',.94,.96,1.08,.96,.01,'Маленькая цель и высокая реакция'),race('Евангелион',1.22,1.1,.87,1.23,.1,'Огромное тело нормализовано ареной'),race('Ангел',1.16,1.07,.94,1.12,.12,'Сильное A.T.-поле'),race('Лилин',1,1,1,1,.03,'Стабильная человеческая форма'),race('Клон Рэй',1.04,1.02,1.03,.99,.05,'Высокая синхронизация')],[
+    power('at-field','A.T.-поле',29,5.2,260,'shield','Абсолютное поле отражает урон и толкает врага.',{shield:105,knockback:190}),power('progressive-knife','Прогрессивный нож',39,4,135,'melee','Вибролезвие режет броню и защитные поля.',{armorPen:.62}),power('positron-rifle','Позитронная винтовка',49,6.8,470,'beam','Дальний пробивающий энергетический выстрел.',{armorPen:.55}),power('longinus-spear','Копьё Лонгиния',46,6.2,430,'projectile','Красное двойное копьё пронзает защиту.',{armorPen:.78}),power('eva-berserk','Берсерк Евы-01',43,5.8,130,'drain','Звериная атака восстанавливает часть прочности.',{lifesteal:.38})]),
+
+  universe('slime','О моём перерождении в слизь','Монстры, навыки и пробуждённые владыки','#62f0df','slime',[
+    race('Человек',.95,.96,1.04,.98,.01,'Обычный авантюрист'),race('Слизь',1.04,1.02,1.08,.78,.05,'Маленькая упругая цель'),race('Киджин',1.1,1.08,1.04,1.03,.05,'Эволюционировавший они'),race('Демон',1.15,1.08,.98,1.06,.08,'Магическая живучесть'),race('Истинный дракон',1.24,1.11,.88,1.2,.11,'Много HP и брони')],[
+    power('predator','Хищник',36,4.5,130,'drain','Поглощает часть силы и лечит владельца.',{lifesteal:.52}),power('great-sage','Великий мудрец',29,4.8,320,'precision','Анализирует слабое место и атакует точно.',{crit:.2}),power('beelzebuth','Вельзевул',42,5.9,280,'area','Чёрная сфера пожирает всё в области.',{area:130,lifesteal:.2}),power('megiddo','Мегиддо',45,6.4,450,'beam','Солнечные лучи воды поражают цель издалека.',{armorPen:.48}),power('black-flame','Чёрное пламя',35,4.7,330,'dot','Пламя продолжает сжигать цель.',{dot:8})]),
+
+  universe('ragnarok','Повесть о конце света','Боги, люди и вёльунды Рагнарёка','#f2b84b','ragnarok',[
+    race('Человек',.96,1,1.04,.98,.02,'Человеческая воля против богов'),race('Бог',1.15,1.08,.98,1.08,.09,'Божественная сила и броня'),race('Полубог',1.08,1.05,1.02,1.03,.06,'Баланс двух природ'),race('Валькирия',1.02,1.04,1.07,.99,.04,'Связь с оружием Вёльунд'),race('Демон',1.16,1.09,.95,1.08,.08,'Высокая живучесть')],[
+    power('volundr','Вёльунд',38,4.2,150,'melee','Душа Валькирии становится оружием против богов.',{armorPen:.52}),power('eyes-of-lord','Глаза Господа',31,5.4,190,'counter','Копирует движение врага и отвечает без промаха.',{dodge:.24,crit:.16}),power('thors-hammer','Мьёльнир Тора',49,6.6,175,'area','Пробуждённый молот вызывает ударную волну.',{area:125,knockback:290}),power('sky-eater','Пожиратель неба',45,5.8,230,'melee','Мощнейший взмах алебарды разрывает воздух.',{armorPen:.42,knockback:250}),power('tandava-karma','Тандава Карма',40,5.2,180,'dot','Огненный танец Шивы оставляет ожог.',{dot:8})]),
+
+  universe('parasyte','Паразит','Люди, паразиты и изменяющаяся плоть','#ef536e','parasyte',[
+    race('Человек',.94,.95,1.04,.98,.01,'Обычная человеческая физиология'),race('Паразит',1.08,1.07,1.06,1.02,.05,'Тело превращается в оружие'),race('Гибрид',1.12,1.06,1.09,1.01,.05,'Клетки Миги усиливают всё тело'),race('Многотельный паразит',1.2,1.1,.94,1.12,.09,'Несколько паразитов делят одно тело'),race('Мутант',1.1,1.08,1.01,1.05,.07,'Непредсказуемая регенерация')],[
+    power('migi-blade','Клинок Миги',38,3.8,155,'melee','Рука превращается в сверхбыстрое лезвие.'),power('parasite-shield','Щит паразита',28,4.7,170,'shield','Плоть мгновенно закрывает владельца щитом.',{shield:92}),power('tentacle-barrage','Шквал щупалец',35,4.4,260,'area','Гибкие лезвия атакуют вокруг владельца.',{area:120,multi:3}),power('parasite-senses','Чувства паразита',29,4.9,310,'counter','Замечает атаку раньше человека и контратакует.',{dodge:.22}),power('body-takeover','Захват тела',41,5.9,210,'drain','Паразитический удар вытягивает жизненную силу.',{lifesteal:.44})]),
+
+  universe('seven-deadly-sins','Семь смертных грехов','Демоны, богини, феи и священные сокровища','#b96cff','seven-deadly-sins',[
+    race('Человек',.96,.97,1.04,.98,.01,'Стабильный рыцарь'),race('Демон',1.16,1.09,.96,1.07,.09,'Тьма и высокая живучесть'),race('Богиня',1.07,1.04,1.05,1.02,.07,'Свет и магическая защита'),race('Фея',.95,1.02,1.12,.88,.03,'Маленькая и быстрая цель'),race('Великан',1.27,1.11,.82,1.29,.08,'Огромные HP и сила')],[
+    power('full-counter','Full Counter',35,4.8,210,'counter','Отражает силу направленной атаки обратно.',{dodge:.18}),power('snatch','Snatch',32,4.2,260,'drain','Крадёт физическую силу и здоровье цели.',{lifesteal:.48}),power('disaster','Disaster',40,5.5,320,'area','Управляет природой и усиливает разрушение.',{area:135}),power('creation','Creation',39,5,280,'projectile','Земля превращается в массивное оружие.'),power('infinity','Infinity',44,6.1,360,'beam','Заклинание Мерлин поддерживает разрушительный поток.',{armorPen:.4})])
 ];
 
 const ULTIMATES = {
@@ -121,7 +145,13 @@ const ULTIMATES = {
   'mob': {id:'ultimate-mob',name:'ЭМОЦИИ 100%',cooldown:34,duration:2,type:'nova',damage:145,description:'Психическая энергия взрывается вокруг владельца.'},
   'gurren': {id:'ultimate-gurren',name:'СПИРАЛЬНЫЙ ПРЕДЕЛ',cooldown:35,duration:9,type:'buff',damage:1.48,speed:1.2,description:'Воля превращается в гигантский спиральный импульс.'},
   'eminence': {id:'ultimate-eminence',name:'I AM ATOMIC',cooldown:38,duration:2.5,type:'atomic',damage:210,description:'Фиолетовый взрыв накрывает почти всю арену.'},
-  'fairy-tail': {id:'ultimate-fairy-tail',name:'DRAGON FORCE',cooldown:31,duration:8,type:'buff',damage:1.36,speed:1.28,description:'Драконья энергия усиливает тело и магию.'}
+  'fairy-tail': {id:'ultimate-fairy-tail',name:'DRAGON FORCE',cooldown:31,duration:8,type:'buff',damage:1.36,speed:1.28,description:'Драконья энергия усиливает тело и магию.'},
+  're-zero': {id:'ultimate-re-zero',name:'ВОЗВРАЩЕНИЕ СМЕРТЬЮ',cooldown:36,duration:8,type:'alchemy',damage:1.25,heal:240,shield:120,description:'Знание прошлой петли восстанавливает тело и даёт щит.'},
+  'evangelion': {id:'ultimate-evangelion',name:'БЕРСЕРК ЕВЫ-01',cooldown:34,duration:8,type:'berserk',damage:1.48,speed:1.3,heal:.18,description:'Ева срывает ограничители и переходит в звериный режим.'},
+  'slime': {id:'ultimate-slime',name:'ПРОБУЖДЕНИЕ ВЛАДЫКИ ДЕМОНОВ',cooldown:35,duration:8,type:'berserk',damage:1.42,speed:1.25,heal:.26,description:'Харвест-фестиваль полностью перестраивает тело.'},
+  'ragnarok': {id:'ultimate-ragnarok',name:'ГЕЙРРЁД: МОЛОТ ТОРА',cooldown:37,duration:2,type:'nova',damage:184,description:'Пробуждённый Мьёльнир возвращается сокрушительным броском.'},
+  'parasyte': {id:'ultimate-parasyte',name:'ПОЛНОЕ РАСКРЫТИЕ МИГИ',cooldown:31,duration:7,type:'bladeStorm',damage:30,description:'Органические лезвия атакуют со всех сторон.'},
+  'seven-deadly-sins': {id:'ultimate-seven-deadly-sins',name:'ASSAULT MODE',cooldown:34,duration:8,type:'berserk',damage:1.46,speed:1.28,heal:.15,description:'Демоническая метка высвобождает полную силу.'}
 };
 
 for (const item of UNIVERSES) {
@@ -235,7 +265,37 @@ const EXTRA_ULTIMATES = {
     ultimate('ft-fairy-law','FAIRY LAW','nova',176,38,2,'Свет гильдии поражает всех признанных врагами.',{visual:'gold'}),
     ultimate('ft-natsu','РЕЖИМ КОРОЛЯ ДРАКОНОВ','berserk',1.46,34,8,'Драконье пламя усиливает удары и скорость.',{speed:1.32,heal:.14,visual:'dragonFire'}),
     ultimate('ft-za-warudo','МИР ЛЬДА','timeStop',44,36,4,'Абсолютный лёд сковывает всех противников.',{visual:'ice'}),
-    ultimate('ft-heaven','СЕМА','nova',168,37,2.5,'Небесное тело падает в центр арены.',{visual:'meteor'})]
+    ultimate('ft-heaven','СЕМА','nova',168,37,2.5,'Небесное тело падает в центр арены.',{visual:'meteor'})],
+  're-zero':[
+    ultimate('rezero-puck','ЗВЕРЬ КОНЦА','nova',166,37,2.2,'Пак высвобождает ледяной апокалипсис.',{visual:'ice'}),
+    ultimate('rezero-al-shamak','АЛЬ ШАМАК','domain',15,35,5,'Пространственная тьма запирает ближайшую цель.',{tickRate:.5,cage:true,stun:true,visual:'shadowCage'}),
+    ultimate('rezero-oni-god','БОГ ОНИ','berserk',1.44,32,8,'Рог Они усиливает скорость, урон и восстановление.',{speed:1.32,heal:.2,visual:'redAura'}),
+    ultimate('rezero-unseen','НЕЗРИМЫЕ ДЛАНИ','bladeStorm',28,31,5,'Серия невидимых рук ударяет всех противников.',{visual:'shadow'})],
+  'evangelion':[
+    ultimate('eva-impact','ТРЕТИЙ УДАР','nova',190,39,2.4,'Анти-A.T.-поле накрывает арену крестовым взрывом.',{visual:'crossBlast'}),
+    ultimate('eva-longinus','КОПЬЁ ЛОНГИНИЯ','execute',230,38,4,'Копьё пробивает A.T.-поле самой слабой цели.',{visual:'spear'}),
+    ultimate('eva-beast','THE BEAST','berserk',1.5,34,7,'Ева-02 снимает ограничения и ускоряет атаки.',{speed:1.42,heal:.12,visual:'beast'}),
+    ultimate('eva-instrumentality','КОМПЛЕМЕНТАЦИЯ','timeStop',46,39,4.5,'Красное море LCL на время сковывает всех врагов.',{visual:'instrumentality'})],
+  'slime':[
+    ultimate('slime-azathoth','АЗАТОТ: БОГ ПУСТОТЫ','nova',188,39,2,'Пустота пожирает энергию всей арены.',{visual:'void'}),
+    ultimate('slime-raphael','РАФАЭЛЬ: АВТОБОЙ','buff',1.35,33,9,'Мудрость Рафаэля оптимизирует каждое движение.',{speed:1.42,dodge:.2,visual:'goldEye'}),
+    ultimate('slime-megiddo','МЕГИДДО','bladeStorm',30,34,5,'Солнечные капли превращаются в точные лучи.',{visual:'lightRain'}),
+    ultimate('slime-veldora','ШТОРМ ВЕЛЬДОРЫ','domain',15,36,5,'Штормовая клетка удерживает ближайшего противника.',{tickRate:.5,cage:true,stun:true,visual:'stormCage'})],
+  'ragnarok':[
+    ultimate('ror-adam','ГЛАЗА ГОСПОДА','sharingan',0,34,8,'Видит и копирует движения всех противников.',{slow:.5,dodge:.3,visual:'eyes'}),
+    ultimate('ror-poseidon','СОРОКАДНЕВНЫЙ ПОТОП','bladeStorm',31,35,5,'Трезубец оставляет бесчисленные водяные разрезы.',{visual:'waterBlade'}),
+    ultimate('ror-buddha','МАХАПАРИ НИРВАНА','nova',176,38,2,'Просветлённое оружие разрубает тьму арены.',{visual:'goldBlade'}),
+    ultimate('ror-shiva','ТАНДАВА КАРМА','berserk',1.48,34,7,'Пылающий танец ускоряет каждый удар.',{speed:1.4,heal:.12,visual:'fire'})],
+  'parasyte':[
+    ultimate('parasyte-gotou','ГОТО: ПЯТЬ ПАРАЗИТОВ','berserk',1.46,34,8,'Пять организмов синхронно перестраивают тело.',{speed:1.25,heal:.28,visual:'parasite'}),
+    ultimate('parasyte-blade-rain','БУРЯ ЛЕЗВИЙ','bladeStorm',31,33,5,'Плоть превращается в дождь органических клинков.',{visual:'parasiteBlade'}),
+    ultimate('parasyte-hybrid','ГИБРИДНЫЙ ПРЕДЕЛ','buff',1.38,31,9,'Клетки Миги усиливают скорость и восприятие.',{speed:1.48,dodge:.18,visual:'redAura'}),
+    ultimate('parasyte-cell-prison','КЛЕТОЧНЫЙ ЗАХВАТ','domain',15,36,5,'Щупальца запирают ближайшую цель в живой клетке.',{tickRate:.5,cage:true,stun:true,visual:'kaguneCage'})],
+  'seven-deadly-sins':[
+    ultimate('sds-revenge','REVENGE COUNTER','nova',186,38,2,'Накопленный урон возвращается ударной волной.',{visual:'blackBlade'}),
+    ultimate('sds-the-one','THE ONE','berserk',1.52,36,6,'Солнце на короткое время доводит силу до пика.',{speed:1.2,heal:.16,visual:'sun'}),
+    ultimate('sds-sacred','СВЯЩЕННОЕ СОКРОВИЩЕ','bladeStorm',31,33,5,'Истинная форма сокровища создаёт серию атак.',{visual:'sacredBlade'}),
+    ultimate('sds-chaos','ХАОС КАМЕЛОТА','domain',15,38,5,'Хаос меняет реальность и запирает ближайшую цель.',{tickRate:.5,cage:true,stun:true,visual:'chaosCage'})]
 };
 
 const BATTLE_STYLES = {
@@ -245,7 +305,9 @@ const BATTLE_STYLES = {
   'attack-titan':{weapon:'dualBlade',basic:'blade'},'mha':{weapon:'gauntlet',basic:'fist'},'hunter':{weapon:'nenCard',basic:'magic'},
   'chainsaw':{weapon:'chainsaw',basic:'chainsaw'},'black-clover':{weapon:'greatsword',basic:'blade'},'solo-leveling':{weapon:'dualDagger',basic:'blade'},
   'fullmetal':{weapon:'automail',basic:'alchemy'},'tokyo-ghoul':{weapon:'kagune',basic:'kagune'},'mob':{weapon:'psychic',basic:'psychic'},
-  'gurren':{weapon:'drill',basic:'drill'},'eminence':{weapon:'slimeSword',basic:'blade'},'fairy-tail':{weapon:'magicSeal',basic:'magic'}
+  'gurren':{weapon:'drill',basic:'drill'},'eminence':{weapon:'slimeSword',basic:'blade'},'fairy-tail':{weapon:'magicSeal',basic:'magic'},
+  're-zero':{weapon:'iceStaff',basic:'magic'},'evangelion':{weapon:'progressiveKnife',basic:'blade'},'slime':{weapon:'slimeBlade',basic:'magic'},
+  'ragnarok':{weapon:'volundr',basic:'fist'},'parasyte':{weapon:'parasiteBlade',basic:'kagune'},'seven-deadly-sins':{weapon:'sacredTreasure',basic:'blade'}
 };
 
 for (const item of UNIVERSES) {

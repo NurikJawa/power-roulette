@@ -35,7 +35,9 @@ source_for() {
     mha) echo "mailed-fist";; hunter) echo "targeting";; chainsaw|chainsaw-rush) echo "chainsaw";;
     black-clover) echo "three-leaves";; solo-leveling|eminence) echo "shadow-grasp";;
     fullmetal) echo "pentacle";; tokyo-ghoul) echo "carnivore-mouth";; mob) echo "psychic-waves";;
-    gurren) echo "drill";; fairy-tail) echo "fairy-wings";;
+    gurren) echo "drill";; fairy-tail) echo "fairy-wings";; re-zero) echo "crystal-wand";;
+    evangelion) echo "robot-golem";; slime) echo "slime";; ragnarok) echo "thor-hammer";;
+    parasyte) echo "tentacles-skull";; seven-deadly-sins) echo "seven-pointed-star";;
     ultimate-opm) echo "punch-blast";; ultimate-death-note) echo "death-note";; ultimate-jojo) echo "stopwatch";;
     ultimate-dragon-ball) echo "aura";; ultimate-naruto) echo "all-seeing-eye";; ultimate-bleach) echo "sword-array";;
     ultimate-one-piece) echo "spring";; ultimate-jujutsu) echo "pentacle";; ultimate-demon-slayer) echo "flaming-claw";;
@@ -43,6 +45,20 @@ source_for() {
     ultimate-chainsaw) echo "chainsaw";; ultimate-black-clover) echo "daemon-skull";; ultimate-solo-leveling) echo "shadow-grasp";;
     ultimate-fullmetal) echo "philosopher-bust";; ultimate-tokyo-ghoul) echo "tentacles-skull";; ultimate-mob) echo "psychic-waves";;
     ultimate-gurren) echo "drill";; ultimate-eminence) echo "atomic-slashes";; ultimate-fairy-tail) echo "dragon-head";;
+    ultimate-re-zero) echo "cycle";; ultimate-evangelion) echo "robot-golem";; ultimate-slime) echo "dripping-goo";;
+    ultimate-ragnarok) echo "hammer-drop";; ultimate-parasyte) echo "tentacle-strike";; ultimate-seven-deadly-sins) echo "daemon-skull";;
+    return-by-death) echo "time-trap";; invisible-providence) echo "invisible-face";; el-huma) echo "ice-bolt";;
+    oni-blood) echo "horned-helm";; shamak) echo "shadow-grasp";;
+    at-field) echo "energy-shield";; progressive-knife) echo "stiletto";; positron-rifle) echo "laser-blast";;
+    longinus-spear) echo "spear-hook";; eva-berserk) echo "robot-antennas";;
+    predator) echo "carnivore-mouth";; great-sage) echo "brain";; beelzebuth) echo "black-hole-bolas";;
+    megiddo) echo "sunbeams";; black-flame) echo "burning-skull";;
+    volundr) echo "crossed-swords";; eyes-of-lord) echo "all-seeing-eye";; thors-hammer) echo "thor-hammer";;
+    sky-eater) echo "halberd";; tandava-karma) echo "flaming-claw";;
+    migi-blade) echo "severed-hand";; parasite-shield) echo "shield-reflect";; tentacle-barrage) echo "tentacle-strike";;
+    parasite-senses) echo "six-eyes";; body-takeover) echo "internal-organ";;
+    full-counter) echo "mirror-mirror";; snatch) echo "grab";; disaster) echo "root-tip";;
+    creation) echo "stone-pile";; infinity) echo "infinity";;
     stat-strength|strength-*) echo "biceps";; stat-iq|iq-*) echo "brain";; stat-speed|speed-*) echo "sprint";;
     stat-durability|durability-*) echo "armor-vest";; stat-height|height-*) echo "body-height";;
     stat-combat|combat-*) echo "crossed-swords";; stat-luck|luck-*) echo "perspective-dice-six-faces-random";;
@@ -74,6 +90,10 @@ source_for() {
 }
 
 while IFS= read -r output; do
+  # This one is a dedicated public-domain Sharingan asset, not a Game-icons glyph.
+  if [[ "$output" == "ultimate-naruto" && -s "$target/$output.png" ]]; then
+    continue
+  fi
   source_name=$(source_for "$output")
   source_file=$(find "$source_root" -type f -name "$source_name.svg" | head -n 1 || true)
   if [[ -z "$source_file" ]]; then

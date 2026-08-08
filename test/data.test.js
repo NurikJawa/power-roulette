@@ -7,9 +7,9 @@ global.window = {};
 require('../public/data.js');
 const { UNIVERSES, UNIVERSAL_ROULETTES, PHASES } = window.POWER_DATA;
 
-test('в каталоге не меньше 15 вселенных и присутствуют заказанные', () => {
-  assert.ok(UNIVERSES.length >= 15);
-  for (const id of ['jujutsu', 'gurren', 'eminence', 'attack-titan', 'bleach']) {
+test('в каталоге 27 вселенных и присутствуют все заказанные', () => {
+  assert.equal(UNIVERSES.length, 27);
+  for (const id of ['jujutsu', 'gurren', 'eminence', 'attack-titan', 'bleach', 'death-note', 're-zero', 'evangelion', 'slime', 'ragnarok', 'parasyte', 'seven-deadly-sins']) {
     assert.ok(UNIVERSES.some(universe => universe.id === id), `Нет вселенной ${id}`);
   }
 });
@@ -79,4 +79,13 @@ test('локальный набор звуков способностей уст
   for (const file of audio) assert.ok(fs.statSync(path.join(directory, file)).size > 500, `Пустой звук ${file}`);
   const music = path.join(__dirname, '..', 'public', 'assets', 'sounds', 'battle-music.ogg');
   assert.ok(fs.existsSync(music) && fs.statSync(music).size > 100000, 'Нет полноценной боевой музыки');
+});
+
+test('Тетрадь смерти использует ручной выбор и канонический таймер 40 секунд', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
+  assert.match(source, /function openDeathNote\(\)/);
+  assert.match(source, /kind:"deathNote"/);
+  assert.match(source, /at:b\.time\+40/);
+  assert.match(source, /remaining>5/);
+  assert.match(source, /deathNoteUsed/);
 });

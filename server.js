@@ -116,6 +116,9 @@ wss.on("connection", ws => {
       send(room.clients.get(room.hostId)?.ws, { type:"spin_request", senderId:ws.clientId });
     } else if (message.type === "ability_request" && room.started) {
       send(room.clients.get(room.hostId)?.ws, { type:"ability_request", senderId:ws.clientId });
+    } else if (message.type === "death_note_request" && room.started) {
+      const rawTarget=Number(message.targetId),targetId=Number.isFinite(rawTarget)?Math.max(0,Math.min(9,Math.trunc(rawTarget))):-1;
+      send(room.clients.get(room.hostId)?.ws, { type:"death_note_request", senderId:ws.clientId, targetId });
     } else if (message.type === "power_request" && room.started) {
       send(room.clients.get(room.hostId)?.ws, { type:"power_request", senderId:ws.clientId });
     } else if (message.type === "attack_request" && room.started) {

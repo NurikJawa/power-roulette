@@ -49,6 +49,9 @@ test('комната создаётся, второй игрок входит и
   const ability = next(first, 'ability_request');
   second.send(JSON.stringify({ type:'ability_request' }));
   assert.equal((await ability).senderId, joined.players[1].id);
+  const deathNote = next(first, 'death_note_request');
+  second.send(JSON.stringify({ type:'death_note_request', targetId:0 }));
+  assert.deepEqual(await deathNote, {type:'death_note_request',senderId:joined.players[1].id,targetId:0});
   const power = next(first, 'power_request');
   second.send(JSON.stringify({ type:'power_request' }));
   assert.equal((await power).senderId, joined.players[1].id);
