@@ -8,6 +8,7 @@
   <meta name="description" content="Собери случайного бойца из 33 вселенных и активируй его уникальную ульту в сетевой битве.">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="wheel-fix.css">
+  <link rel="stylesheet" href="roulette-fx.css">
   <link rel="stylesheet" href="action-fx.css">
   <link rel="stylesheet" href="avatar.css">
 </head>
@@ -64,6 +65,12 @@
     </section>
 
     <section id="rouletteScreen" class="screen roulette-screen">
+      <div class="roulette-cosmos" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div id="dropCinematic" class="drop-cinematic" aria-hidden="true">
+        <div class="drop-flash"></div><div class="drop-speedlines"></div><div class="drop-shockwave wave-a"></div><div class="drop-shockwave wave-b"></div>
+        <div id="dropParticles" class="drop-particles"></div>
+        <div class="drop-announcement"><small id="dropRarity">РЕДКИЙ РЕЗУЛЬТАТ</small><strong id="dropName">—</strong></div>
+      </div>
       <header class="topbar">
         <button class="logo-button" data-home><span>R</span> РУЛЕТКА СИЛЫ</button>
         <div class="phase"><small id="phaseNumber">ЭТАП 1 ИЗ 11</small><b id="phaseName">ВСЕЛЕННАЯ</b></div>
@@ -82,7 +89,7 @@
         <aside class="result-panel panel">
           <span class="eyebrow">ПОСЛЕДНИЙ РЕЗУЛЬТАТ</span>
           <div id="emptyResult" class="empty-result"><b>?</b><span>Колесо ещё<br>не выбрало судьбу</span></div>
-          <div id="resultCard" class="result-card hidden"><div class="result-image"><img id="resultImage" alt=""></div><small id="resultType">ВСЕЛЕННАЯ</small><h3 id="resultName">—</h3><p id="resultDescription"></p><div id="resultStats" class="result-stats"></div></div>
+          <div id="resultCard" class="result-card hidden"><b id="resultRarity" class="result-rarity">ОБЫЧНЫЙ</b><div class="result-image"><img id="resultImage" alt=""></div><small id="resultType">ВСЕЛЕННАЯ</small><h3 id="resultName">—</h3><p id="resultDescription"></p><div id="resultStats" class="result-stats"></div></div>
           <button id="openBuild" class="build-button">МОЯ СБОРКА <span>↗</span></button>
         </aside>
       </div>

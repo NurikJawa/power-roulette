@@ -20,6 +20,8 @@
 
 В каталоге есть One Punch Man, Death Note, JoJo, Dragon Ball, Naruto, Bleach, One Piece, Jujutsu Kaisen, Demon Slayer, Attack on Titan, My Hero Academia, Hunter × Hunter, Chainsaw Man, Black Clover, Solo Leveling, Fullmetal Alchemist, Tokyo Ghoul, Mob Psycho 100, Gurren Lagann, The Eminence in Shadow, Fairy Tail, Re:Zero, Evangelion, That Time I Got Reincarnated as a Slime, Record of Ragnarok, Parasyte и The Seven Deadly Sins.
 
+Сама рулетка оформлена как живая космическая сцена. Результаты автоматически получают обычную, редкую, эпическую или легендарную редкость; сильные выпадения меняют палитру всего экрана и сопровождаются ударной волной, частицами и отдельным звуковым ударом.
+
 ## Бой
 
 - Около 1000 базовых HP до модификаторов расы, прочности и роста.

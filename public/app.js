@@ -126,6 +126,7 @@ function renderLobby() {
 function basePlayer(player,index) { return { id:index,clientId:player.id,name:player.name,color:player.color||PLAYER_COLORS[index],appearance:cleanAppearance(player.appearance),universe:null,race:null,power:null,ultimate:null,attrs:{},damageDone:0,kills:0 }; }
 function beginRoulette(players) {
   state.players=players.map(basePlayer); state.turn=0; state.phaseIndex=0; state.rotation=0; state.spinning=false;
+  resetDropImpact(true);
   $("#emptyResult").classList.remove("hidden"); $("#resultCard").classList.add("hidden");
   showScreen("rouletteScreen"); updatePhaseUi(); renderWheel(); renderTurnList(); playSound("phase",.55);
 }
@@ -144,6 +145,42 @@ function itemKey(item) { return item.id||item.name; }
 function weightedPick(items) {
   const total=items.reduce((sum,item)=>sum+(item.weight||1),0); let pick=random()*total;
   for (const item of items) { pick-=item.weight||1; if (pick<=0) return item; } return items.at(-1);
+}
+const DROP_RARITIES={common:{label:"ОБЫЧНЫЙ РЕЗУЛЬТАТ"},rare:{label:"РЕДКИЙ РЕЗУЛЬТАТ"},epic:{label:"ЭПИЧЕСКИЙ РЕЗУЛЬТАТ"},legendary:{label:"ЛЕГЕНДАРНОЕ ВЫПАДЕНИЕ"}};
+const LEGENDARY_UNIVERSES=new Set(["opm","dragon-ball","gurren","slime","misfit"]),EPIC_UNIVERSES=new Set(["naruto","bleach","one-piece","jujutsu","attack-titan","solo-leveling","eminence","overlord","fate","ragnarok"]);
+function rarityForResult(item,phase=currentPhase()){
+  if(phase.type==="universal"){const weight=item.weight??99;return weight<=6?"legendary":weight<=20?"epic":weight<=29?"rare":"common"}
+  if(phase.type==="universe")return LEGENDARY_UNIVERSES.has(item.id)?"legendary":EPIC_UNIVERSES.has(item.id)?"epic":"rare";
+  if(phase.type==="race"){
+    if(/Ооцуцуки|Истинный дракон|Божественный дух|Антиспираль|Монарх|Правитель|Высшая луна|Каменный человек|Бог$|Бог смерти/i.test(item.name))return "legendary";
+    if(/Демон|Вампир|Шифтер|Лунариан|Арранкар|Саянин|Эльф|Гетероморф|Проклятие|Ева|Слуга/i.test(item.name))return "epic";
+    const score=(item.hp||1)*(item.damage||1)*(item.speed||1)*(1+(item.armor||0)*2);return score>=1.34?"epic":score>=1.12?"rare":"common";
+  }
+  if(phase.type==="power"){
+    const name=item.name||"",score=(item.damage||0)+(item.area||0)/10+(item.armorPen||0)*24+(item.multi||1)*2+(item.execute||0)*45+(item.delayed||0)/18+(item.lifesteal||0)*12;
+    if(score>=67||/Серьёзный удар|I Am Atomic|Venuzdonoa|Excalibur|Fallen Down|Harkonnen|Колоссальный|Тетрадь смерти/i.test(name))return "legendary";
+    if(score>=53||item.damage>=46||item.armorPen>=.7)return "epic";return score>=39?"rare":"common";
+  }
+  if(phase.type==="ultimate"){
+    if(item.type==="atomic"||item.type==="execute"&&item.damage>=225||item.type==="nova"&&item.damage>=180||/GOAL OF ALL LIFE|VENUZDONOA|UNLIMITED BLADE WORKS|ТРЕТИЙ УДАР|АЗАТОТ|GIGA DRILL BREAK|I AM ATOMIC/i.test(item.name))return "legendary";
+    return "epic";
+  }
+  return "common";
+}
+function resetDropImpact(resetTheme=false){const screen=$("#rouletteScreen"),cinematic=$("#dropCinematic");clearTimeout(resetDropImpact.timer);cinematic.className="drop-cinematic";screen.classList.remove("drop-rare","drop-epic","drop-legendary");if(resetTheme)screen.classList.remove("rarity-theme-rare","rarity-theme-epic","rarity-theme-legendary")}
+function playDropSound(rarity,item){
+  const hash=hashText(`${currentPhase().id}:${itemKey(item)}`);playSound("reveal",rarity==="legendary"?.82:rarity==="epic"?.7:.52,rarity==="legendary"?.78:1);
+  if(rarity==="common")return;
+  if(rarity==="rare"){playPathSound(`assets/sounds/abilities/forceField_${String(hash%5).padStart(3,"0")}.ogg`,.42,.98,40);return}
+  playPathSound(`assets/sounds/abilities/impactPunch_heavy_${String(hash%5).padStart(3,"0")}.ogg`,rarity==="legendary"?.72:.56,rarity==="legendary"?.72:.88,30);
+  playPathSound(`assets/sounds/abilities/${rarity==="legendary"?"lowFrequency_explosion":"forceField"}_${String(hash%(rarity==="legendary"?2:5)).padStart(3,"0")}.ogg`,rarity==="legendary"?.78:.5,.82,100);
+  if(rarity==="legendary"){playPathSound(`assets/sounds/abilities/explosionCrunch_${String((hash>>>4)%5).padStart(3,"0")}.ogg`,.62,.76,190);playPathSound(`assets/sounds/abilities/laserLarge_${String((hash>>>8)%5).padStart(3,"0")}.ogg`,.48,.68,260)}
+}
+function triggerDropImpact(item,rarity){
+  const screen=$("#rouletteScreen"),cinematic=$("#dropCinematic"),hash=hashText(itemKey(item));resetDropImpact(true);if(rarity!=="common")screen.classList.add(`rarity-theme-${rarity}`);screen.style.setProperty("--result-color",item.color||state.players[state.turn]?.universe?.color||"#ff5c4d");
+  $("#dropRarity").textContent=DROP_RARITIES[rarity].label;$("#dropName").textContent=item.name;const colors=rarity==="legendary"?["#fff6af","#ffd54a","#ff7b31","#fff"]:rarity==="epic"?["#d9a4ff","#934dff","#ff64d4","#fff"]:["#8cecff","#4fbeff","#fff"];
+  const count=rarity==="legendary"?42:rarity==="epic"?30:rarity==="rare"?18:0;$("#dropParticles").innerHTML=Array.from({length:count},(_,index)=>{const angle=(index/count*360+(hash%17)).toFixed(1),distance=180+(index*37+hash)%620,size=5+(index*11+hash)%22,delay=((index%7)*.018).toFixed(3),color=colors[index%colors.length];return `<i style="--angle:${angle}deg;--distance:${distance}px;--size:${size}px;--delay:${delay}s;--particle-color:${color}"></i>`}).join("");
+  void cinematic.offsetWidth;cinematic.className=`drop-cinematic ${rarity} active`;if(rarity!=="common")screen.classList.add(`drop-${rarity}`);playDropSound(rarity,item);resetDropImpact.timer=setTimeout(()=>{cinematic.className="drop-cinematic";screen.classList.remove("drop-rare","drop-epic","drop-legendary")},rarity==="legendary"?2250:1850);
 }
 function renderWheel() {
   const items=itemsFor();
@@ -196,14 +233,14 @@ function assignResult(player,item) {
 }
 function performSpin(forcedId) {
   if (state.spinning||state.turn>=state.players.length) return; const items=itemsFor(),item=items.find(value=>itemKey(value)===forcedId)||items[0];
-  state.spinning=true; $("#spinButton").disabled=true; $("#spinHint").textContent="Колесо переписывает реальность…";
+  resetDropImpact(true);state.spinning=true; $("#spinButton").disabled=true; $("#spinHint").textContent="Колесо переписывает реальность…";
   const visible=items,index=Math.max(0,visible.findIndex(value=>itemKey(value)===forcedId)),slice=360/visible.length;
   const start=state.rotation,current=((start%360)+360)%360,target=(360-index*slice)%360;
   state.rotation=start+((target-current+360)%360)+5*360;
   animateWheel(start,state.rotation,4400,slice,()=>{
     const player=state.players[state.turn]; assignResult(player,item); showResult(item); state.turn++; state.spinning=false; renderTurnList();
     if(state.turn<state.players.length){renderWheel();$("#spinHint").textContent=`${player.name} получает: ${item.name}`;}else{$("#currentPlayerName").textContent=`«${currentPhase().name}» ЗАВЕРШЕНА`;$("#spinHint").textContent=state.phaseIndex===PHASES.length-1?"Все бойцы собраны. Пора на арену.":"Ведущий запускает следующую рулетку.";}
-    playSound("reveal",.6); updateAuthority();
+    updateAuthority();
   });
 }
 function animateWheel(start,end,duration,slice,done){
@@ -220,16 +257,16 @@ function animateWheel(start,end,duration,slice,done){
   requestAnimationFrame(frame);
 }
 function showResult(item) {
-  $("#emptyResult").classList.add("hidden"); $("#resultCard").classList.remove("hidden"); $("#resultImage").src=item.icon; $("#resultName").textContent=item.name; $("#resultType").textContent=currentPhase().name;
+  const rarity=rarityForResult(item),card=$("#resultCard");$("#emptyResult").classList.add("hidden");card.classList.remove("hidden");card.className=`result-card rarity-${rarity}`;$("#resultRarity").textContent=DROP_RARITIES[rarity].label; $("#resultImage").src=item.icon; $("#resultName").textContent=item.name; $("#resultType").textContent=currentPhase().name;
   $("#resultDescription").textContent=item.description||item.trait||item.subtitle||item.label||"Результат будет учтён в бою.";
   $("#resultCard").style.setProperty("--result-color",item.color||state.players[Math.max(0,state.turn)]?.universe?.color||"#ff5c4d");
   const stats=[];if(item.damage)stats.push(item.damage<3?`УСИЛЕНИЕ ×${item.damage}`:`УРОН ${item.damage}`);if(item.tickRate)stats.push(`ТИК ${item.tickRate}с`);if(item.cooldown)stats.push(`КД ${item.cooldown}с`);if(item.range)stats.push(`ДАЛЬНОСТЬ ${item.range}`);if(item.hp)stats.push(`HP ×${item.hp}`);if(item.armor)stats.push(`БРОНЯ ${Math.round(item.armor*100)}%`);if(item.label)stats.push(item.label);
-  $("#resultStats").innerHTML=stats.map(value=>`<span>${value}</span>`).join("");
+  $("#resultStats").innerHTML=stats.map(value=>`<span>${value}</span>`).join("");triggerDropImpact(item,rarity);
 }
 function advancePhase() {
   if (state.phaseIndex>=PHASES.length-1) return; state.phaseIndex++;state.turn=0;state.spinning=false;state.rotation=0;
   $("#wheel").style.transition="none";$("#wheel").style.transform="rotate(0deg)";
-  $("#emptyResult").classList.remove("hidden");$("#resultCard").classList.add("hidden");updatePhaseUi();renderWheel();renderTurnList();playSound("phase",.55);
+  resetDropImpact(true);$("#emptyResult").classList.remove("hidden");$("#resultCard").classList.add("hidden");updatePhaseUi();renderWheel();renderTurnList();playSound("phase",.55);
 }
 
 function showBuild() {

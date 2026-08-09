@@ -114,3 +114,19 @@ test('способность E удерживается для прицела и
   assert.match(source, /event\.code==="KeyE"/);
   assert.match(source, /releasePowerAim\(\)/);
 });
+
+test('рулетка имеет четыре редкости и отдельное кинематографичное выпадение', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'public', 'roulette-fx.css'), 'utf8');
+  assert.match(source, /const DROP_RARITIES=\{common:/);
+  assert.match(source, /function rarityForResult\(/);
+  assert.match(source, /function triggerDropImpact\(/);
+  assert.match(source, /lowFrequency_explosion/);
+  assert.match(source, /resetDropImpact\(true\);state\.spinning=true/);
+  assert.match(html, /id="dropCinematic"/);
+  assert.match(html, /id="dropParticles"/);
+  assert.match(css, /rarity-theme-legendary/);
+  assert.match(css, /@keyframes drop-wave/);
+  assert.match(css, /@keyframes screen-impact-hard/);
+});
