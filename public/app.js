@@ -11,6 +11,27 @@ const state = {
 };
 const LITE_FX=matchMedia("(prefers-reduced-motion: reduce)").matches||(navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);
 document.documentElement.classList.toggle("lite-fx",!!LITE_FX);
+const voidSkyStates=new WeakMap();let voidSkyRunning=false,voidSkyLastFrame=0;
+function makeVoidStar(width,height){const depth=.25+Math.pow(Math.random(),1.7)*1.75,angle=Math.random()*Math.PI*2,speed=.35+depth*1.7;return{x:Math.random()*width,y:Math.random()*height,depth,dx:Math.cos(angle)*speed,dy:Math.sin(angle)*speed,phase:Math.random()*Math.PI*2,twinkle:.0012+Math.random()*.0026}}
+function ensureVoidSky(canvas){
+  const rect=canvas.getBoundingClientRect(),scale=LITE_FX?.38:.55,width=Math.max(320,Math.round(rect.width*scale)),height=Math.max(200,Math.round(rect.height*scale));let sky=voidSkyStates.get(canvas);
+  if(!sky||sky.width!==width||sky.height!==height){canvas.width=width;canvas.height=height;const count=LITE_FX?45:Math.min(150,Math.max(72,Math.round(width*height/4600)));sky={width,height,stars:Array.from({length:count},()=>makeVoidStar(width,height)),meteors:[],nextMeteor:performance.now()+1800+Math.random()*4200,lastTime:performance.now()};voidSkyStates.set(canvas,sky)}return sky;
+}
+function spawnVoidMeteor(sky){
+  const edge=Math.floor(Math.random()*3),speed=210+Math.random()*150,spread=(Math.random()-.5)*.38;let x,y,angle;
+  if(edge===0){x=-30;y=sky.height*(.08+Math.random()*.84);angle=spread}
+  else if(edge===1){x=sky.width+30;y=sky.height*(.08+Math.random()*.84);angle=Math.PI+spread}
+  else{x=sky.width*(.08+Math.random()*.84);y=-30;angle=(Math.random()<.5?.72:2.42)+spread*.45}
+  sky.meteors.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,length:48+Math.random()*80,width:.7+Math.random()*1.3,life:0,maxLife:3.8+Math.random()*2.2,hue:Math.random()<.25?305:264});
+}
+function drawVoidSky(canvas,time){
+  const sky=ensureVoidSky(canvas),ctx=canvas.getContext("2d"),dt=Math.min(.055,Math.max(0,(time-sky.lastTime)/1000));sky.lastTime=time;ctx.clearRect(0,0,sky.width,sky.height);
+  for(const star of sky.stars){if(!LITE_FX){star.x+=star.dx*dt;star.y+=star.dy*dt;if(star.x<0)star.x+=sky.width;else if(star.x>=sky.width)star.x-=sky.width;if(star.y<0)star.y+=sky.height;else if(star.y>=sky.height)star.y-=sky.height}const pulse=.58+.42*Math.sin(time*star.twinkle+star.phase),alpha=(.16+star.depth*.31)*pulse,radius=.35+star.depth*.62;ctx.beginPath();ctx.fillStyle=`rgba(${194+Math.round(star.depth*24)},${184+Math.round(star.depth*17)},255,${alpha.toFixed(3)})`;ctx.arc(star.x,star.y,radius,0,Math.PI*2);ctx.fill()}
+  if(!LITE_FX&&time>=sky.nextMeteor&&sky.meteors.length<2){spawnVoidMeteor(sky);sky.nextMeteor=time+4200+Math.random()*9000}
+  for(let index=sky.meteors.length-1;index>=0;index--){const meteor=sky.meteors[index];meteor.life+=dt;meteor.x+=meteor.vx*dt;meteor.y+=meteor.vy*dt;const speed=Math.hypot(meteor.vx,meteor.vy),ux=meteor.vx/speed,uy=meteor.vy/speed,tailX=meteor.x-ux*meteor.length,tailY=meteor.y-uy*meteor.length,fade=Math.max(0,Math.min(1,meteor.life*4)*Math.min(1,(meteor.maxLife-meteor.life)*2)),gradient=ctx.createLinearGradient(tailX,tailY,meteor.x,meteor.y);gradient.addColorStop(0,"rgba(170,105,255,0)");gradient.addColorStop(.72,`hsla(${meteor.hue},95%,72%,${(.34*fade).toFixed(3)})`);gradient.addColorStop(1,`rgba(255,250,255,${(.9*fade).toFixed(3)})`);ctx.beginPath();ctx.strokeStyle=gradient;ctx.lineWidth=meteor.width;ctx.moveTo(tailX,tailY);ctx.lineTo(meteor.x,meteor.y);ctx.stroke();ctx.beginPath();ctx.fillStyle=`rgba(255,255,255,${(.8*fade).toFixed(3)})`;ctx.arc(meteor.x,meteor.y,meteor.width*1.15,0,Math.PI*2);ctx.fill();if(meteor.life>=meteor.maxLife||meteor.x<-meteor.length-50||meteor.x>sky.width+meteor.length+50||meteor.y<-meteor.length-50||meteor.y>sky.height+meteor.length+50)sky.meteors.splice(index,1)}
+}
+function animateVoidSky(time){const canvas=document.querySelector(".screen.active [data-void-sky]");if(!canvas){voidSkyRunning=false;return}if(LITE_FX||time-voidSkyLastFrame>=33){drawVoidSky(canvas,time);voidSkyLastFrame=time}if(LITE_FX){voidSkyRunning=false;return}requestAnimationFrame(animateVoidSky)}
+function startVoidSky(){if(voidSkyRunning)return;voidSkyRunning=true;requestAnimationFrame(animateVoidSky)}
 
 const sounds = Object.fromEntries(["click","tick","reveal","phase","hit","heavy","block","ko","wheel-spin","sharingan","time-stop","ultimate","beam","domain","transform"].map(name => {
   const audio = new Audio(`assets/sounds/${name}.ogg`); audio.preload="auto"; return [name,audio];
@@ -64,7 +85,7 @@ function playAbilitySound(power,universeId){
 }
 function escapeHtml(value) { const node=document.createElement("div"); node.textContent=value; return node.innerHTML; }
 function escapeAttr(value) { return String(value).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
-function showScreen(id) { $$(".screen").forEach(screen => screen.classList.toggle("active", screen.id===id)); }
+function showScreen(id) { $$(".screen").forEach(screen => screen.classList.toggle("active", screen.id===id)); startVoidSky(); }
 function showToast(message) { const toast=$("#toast"); toast.textContent=message; toast.classList.add("show"); clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>toast.classList.remove("show"),2400); }
 function random() { state.randomSeed=(Math.imul(state.randomSeed,1664525)+1013904223)>>>0; return state.randomSeed/4294967296; }
 function room() { return state.multiplayer.room; }
@@ -761,4 +782,6 @@ $("#onlineName").value=localStorage.getItem("powerRouletteName")||"Shadow";$("#o
 let savedAppearance=DEFAULT_APPEARANCE;try{savedAppearance=cleanAppearance(JSON.parse(localStorage.getItem("powerRouletteAppearance")||"{}"))}catch{}
 for(const [key,value] of Object.entries(savedAppearance))$({face:"#faceStyle",aura:"#auraStyle",accessory:"#accessoryStyle",pattern:"#patternStyle"}[key]).value=value;updateAvatarPreview();
 $("#universeTicker").innerHTML=UNIVERSES.map(item=>`<div class="ticker-item" title="${escapeAttr(item.name)}" style="border-color:${item.color}"><img src="${item.icon}" alt=""></div>`).join("");
+window.addEventListener("resize",()=>{const canvas=document.querySelector(".screen.active [data-void-sky]");if(canvas)voidSkyStates.delete(canvas);startVoidSky()});
+startVoidSky();
 connectMultiplayer();

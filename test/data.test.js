@@ -143,7 +143,7 @@ test('рулетка имеет четыре редкости и отдельн�
   assert.match(css, /@keyframes screen-impact-hard/);
 });
 
-test('современная фиолетовая тема имеет процедурный фон, а звук колеса не наслаивается', () => {
+test('современная фиолетовая тема имеет независимое Canvas-небо, а звук колеса не наслаивается', () => {
   const root = path.join(__dirname, '..', 'public');
   const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
@@ -151,9 +151,14 @@ test('современная фиолетовая тема имеет проце
   assert.match(html, /href="theme-v2\.css"/);
   assert.doesNotMatch(html, /roulette-cosmos-v3/);
   assert.doesNotMatch(theme, /url\([^)]*roulette-cosmos-v3/);
+  assert.equal((html.match(/data-void-sky/g) || []).length, 3, 'Canvas-небо должно быть на трёх основных экранах');
   assert.match(theme, /@keyframes void-nebula-drift/);
-  assert.match(theme, /@keyframes void-stars-drift/);
-  assert.match(theme, /@keyframes void-comet/);
+  assert.doesNotMatch(theme, /@keyframes void-stars-drift|@keyframes void-comet/);
+  assert.match(source, /function makeVoidStar\(/);
+  assert.match(source, /function spawnVoidMeteor\(/);
+  assert.match(source, /time-voidSkyLastFrame>=33/);
+  assert.match(source, /ctx\.createLinearGradient\(tailX,tailY,meteor\.x,meteor\.y\)/);
+  assert.match(source, /tailX=meteor\.x-ux\*meteor\.length/);
   assert.ok(Buffer.byteLength(theme) < 40000, 'Процедурный фон не должен раздувать CSS');
   assert.match(theme, /\.lite-fx/);
   assert.doesNotMatch(theme, /backdrop-filter:blur\([1-9]/);
