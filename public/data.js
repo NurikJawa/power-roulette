@@ -372,10 +372,47 @@ const BATTLE_STYLES = {
   'gachiakuta':{weapon:'vitalInstrument',basic:'trash'},'frieren':{weapon:'mageStaff',basic:'magic'},'fate':{weapon:'nobleBlade',basic:'blade'}
 };
 
+const basicAttack = (visual,shape,reach,size,sound,damage=1,knockback=105,recovery=.68) => ({visual,shape,reach,size,sound,damage,knockback,recovery});
+const BASIC_ATTACKS = {
+  'opm':basicAttack('seriousShockwave','cone',132,1.08,'punch',1.03,142,.72),
+  'death-note':basicAttack('deathInk','line',158,22,'magic',.96,72,.66),
+  'jojo':basicAttack('oraRush','cone',118,1.28,'punch',.98,92,.6),
+  'dragon-ball':basicAttack('kiBolt','line',198,22,'laser',.96,112,.7),
+  'naruto':basicAttack('kunaiArc','cone',124,.88,'blade',1,112,.64),
+  'bleach':basicAttack('getsugaArc','cone',158,.7,'blade',1.02,126,.72),
+  'one-piece':basicAttack('rubberWhip','line',178,34,'soft',.98,148,.7),
+  'jujutsu':basicAttack('cursedBurst','burst',134,61,'magic',1.01,118,.7),
+  'demon-slayer':basicAttack('breathingArc','cone',142,1.04,'blade',1.01,115,.66),
+  'attack-titan':basicAttack('odmCross','cone',128,1.22,'blade',1,136,.67),
+  'mha':basicAttack('smashWind','cone',148,.9,'punch',1.02,158,.73),
+  'hunter':basicAttack('nenCard','line',166,18,'magic',.98,84,.62),
+  'chainsaw':basicAttack('chainsawTrack','line',134,29,'metal',1.04,112,.76),
+  'black-clover':basicAttack('antiMagicCrescent','cone',162,.82,'blade',1.02,127,.74),
+  'solo-leveling':basicAttack('daggerCross','cone',128,.96,'blade',1.01,106,.61),
+  'fullmetal':basicAttack('alchemySpikes','line',158,33,'magic',1,126,.72),
+  'tokyo-ghoul':basicAttack('kaguneFan','cone',152,1.2,'slime',1.01,138,.67),
+  'mob':basicAttack('psychicPalm','burst',164,66,'magic',.98,155,.75),
+  'gurren':basicAttack('drillSpiral','line',169,28,'drill',1.03,152,.74),
+  'eminence':basicAttack('slimeCrescent','cone',151,.78,'blade',1.02,119,.64),
+  'fairy-tail':basicAttack('dragonFlame','cone',158,.64,'laser',1,139,.72),
+  're-zero':basicAttack('iceRune','line',164,31,'magic',.98,121,.7),
+  'evangelion':basicAttack('evaKnife','cone',127,.74,'metal',1.03,116,.66),
+  'slime':basicAttack('slimeSplash','cone',138,1.34,'slime',.98,132,.64),
+  'ragnarok':basicAttack('volundSpark','cone',144,.96,'metal',1.04,154,.76),
+  'parasyte':basicAttack('parasiteScythe','cone',151,1.12,'slime',1.01,128,.65),
+  'seven-deadly-sins':basicAttack('sacredArc','cone',158,.94,'blade',1.02,136,.7),
+  'overlord':basicAttack('deathMagic','burst',174,59,'magic',1,118,.74),
+  'misfit':basicAttack('demonRune','line',174,36,'magic',1.01,128,.7),
+  'hellsing':basicAttack('silverBullet','line',224,15,'metal',.95,91,.58),
+  'gachiakuta':basicAttack('graffitiJunk','cone',152,.86,'soft',1.01,147,.69),
+  'frieren':basicAttack('zoltraakSpark','line',194,19,'laser',.97,96,.64),
+  'fate':basicAttack('nobleSlash','cone',158,.76,'blade',1.03,131,.68)
+};
+
 for (const item of UNIVERSES) {
   item.ultimates=[item.ultimate,...EXTRA_ULTIMATES[item.id]];
   item.ultimates.forEach((value,index)=>{value.icon=index===0?item.ultimate.icon:item.powers[index-1].icon;value.visual||=(BATTLE_STYLES[item.id]?.weapon||'energy');});
-  item.battleStyle=BATTLE_STYLES[item.id];
+  item.battleStyle={...BATTLE_STYLES[item.id],attack:BASIC_ATTACKS[item.id]};
 }
 
 const UNIVERSAL_ROULETTES = [

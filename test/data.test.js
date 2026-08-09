@@ -28,6 +28,22 @@ test('у каждой вселенной свои расы, пять сил и �
   assert.equal(new Set(UNIVERSES.flatMap(universe => universe.ultimates.map(ultimate => ultimate.id))).size, UNIVERSES.length * 5);
 });
 
+test('у всех 33 вселенных уникальный ЛКМ и настоящий профиль хитбокса', () => {
+  const attacks = UNIVERSES.map(universe => universe.battleStyle?.attack);
+  assert.ok(attacks.every(Boolean), 'Не у всех вселенных задан ЛКМ');
+  assert.equal(new Set(attacks.map(attack => attack.visual)).size, UNIVERSES.length, 'Повторяются визуальные эффекты ЛКМ');
+  assert.deepEqual([...new Set(attacks.map(attack => attack.shape))].sort(), ['burst', 'cone', 'line']);
+  for (const [index, attack] of attacks.entries()) {
+    assert.ok(attack.reach >= 110 && attack.reach <= 230, `${UNIVERSES[index].name}: дальность ЛКМ вне баланса`);
+    assert.ok(attack.size > 0 && attack.recovery >= .55, `${UNIVERSES[index].name}: сломан хитбокс ЛКМ`);
+    assert.ok(attack.damage >= .9 && attack.damage <= 1.1, `${UNIVERSES[index].name}: множитель ЛКМ вне баланса`);
+  }
+  const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
+  assert.match(source, /function basicHitTest\(/);
+  assert.match(source, /type:"basicStrike"/);
+  assert.match(source, /type:power\.basicVisual\?"basicHit":"hit"/);
+});
+
 test('есть семь общих рулеток по пять результатов', () => {
   assert.equal(UNIVERSAL_ROULETTES.length, 7);
   assert.ok(UNIVERSAL_ROULETTES.every(roulette => roulette.options.length === 5));
