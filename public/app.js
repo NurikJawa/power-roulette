@@ -10,12 +10,13 @@ const state = {
   multiplayer:{ socket:null, clientId:null, room:null, autoJoined:false, reconnectTimer:null, reconnectAttempt:0 }
 };
 const LITE_FX=matchMedia("(prefers-reduced-motion: reduce)").matches||(navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);
-document.documentElement.classList.toggle("lite-fx",!!LITE_FX);
-const voidSkyStates=new WeakMap();let voidSkyRunning=false,voidSkyLastFrame=0;
+let runtimeLiteFx=!!LITE_FX;
+document.documentElement.classList.toggle("lite-fx",runtimeLiteFx);
+const voidSkyStates=new WeakMap();let voidSkyRunning=false,voidSkyLastFrame=0,voidSkyPerfStart=0,voidSkyPerfFrames=0;
 function makeVoidStar(width,height){const depth=.25+Math.pow(Math.random(),1.7)*1.75,angle=Math.random()*Math.PI*2,speed=.35+depth*1.7;return{x:Math.random()*width,y:Math.random()*height,depth,dx:Math.cos(angle)*speed,dy:Math.sin(angle)*speed,phase:Math.random()*Math.PI*2,twinkle:.0012+Math.random()*.0026}}
 function ensureVoidSky(canvas){
-  const rect=canvas.getBoundingClientRect(),scale=LITE_FX?.38:.55,width=Math.max(320,Math.round(rect.width*scale)),height=Math.max(200,Math.round(rect.height*scale));let sky=voidSkyStates.get(canvas);
-  if(!sky||sky.width!==width||sky.height!==height){canvas.width=width;canvas.height=height;const count=LITE_FX?45:Math.min(150,Math.max(72,Math.round(width*height/4600)));sky={width,height,stars:Array.from({length:count},()=>makeVoidStar(width,height)),meteors:[],nextMeteor:performance.now()+1800+Math.random()*4200,lastTime:performance.now()};voidSkyStates.set(canvas,sky)}return sky;
+  const rect=canvas.getBoundingClientRect(),scale=runtimeLiteFx?.34:.46,width=Math.max(320,Math.round(rect.width*scale)),height=Math.max(200,Math.round(rect.height*scale));let sky=voidSkyStates.get(canvas);
+  if(!sky||sky.width!==width||sky.height!==height){canvas.width=width;canvas.height=height;const count=runtimeLiteFx?38:Math.min(110,Math.max(58,Math.round(width*height/6000)));sky={width,height,stars:Array.from({length:count},()=>makeVoidStar(width,height)),meteors:[],nextMeteor:performance.now()+1800+Math.random()*4200,lastTime:performance.now()};voidSkyStates.set(canvas,sky)}return sky;
 }
 function spawnVoidMeteor(sky){
   const edge=Math.floor(Math.random()*3),speed=210+Math.random()*150,spread=(Math.random()-.5)*.38;let x,y,angle;
@@ -26,11 +27,11 @@ function spawnVoidMeteor(sky){
 }
 function drawVoidSky(canvas,time){
   const sky=ensureVoidSky(canvas),ctx=canvas.getContext("2d"),dt=Math.min(.055,Math.max(0,(time-sky.lastTime)/1000));sky.lastTime=time;ctx.clearRect(0,0,sky.width,sky.height);
-  for(const star of sky.stars){if(!LITE_FX){star.x+=star.dx*dt;star.y+=star.dy*dt;if(star.x<0)star.x+=sky.width;else if(star.x>=sky.width)star.x-=sky.width;if(star.y<0)star.y+=sky.height;else if(star.y>=sky.height)star.y-=sky.height}const pulse=.58+.42*Math.sin(time*star.twinkle+star.phase),alpha=(.16+star.depth*.31)*pulse,radius=.35+star.depth*.62;ctx.beginPath();ctx.fillStyle=`rgba(${194+Math.round(star.depth*24)},${184+Math.round(star.depth*17)},255,${alpha.toFixed(3)})`;ctx.arc(star.x,star.y,radius,0,Math.PI*2);ctx.fill()}
-  if(!LITE_FX&&time>=sky.nextMeteor&&sky.meteors.length<2){spawnVoidMeteor(sky);sky.nextMeteor=time+4200+Math.random()*9000}
+  for(const star of sky.stars){if(!runtimeLiteFx){star.x+=star.dx*dt;star.y+=star.dy*dt;if(star.x<0)star.x+=sky.width;else if(star.x>=sky.width)star.x-=sky.width;if(star.y<0)star.y+=sky.height;else if(star.y>=sky.height)star.y-=sky.height}const pulse=.58+.42*Math.sin(time*star.twinkle+star.phase),alpha=(.16+star.depth*.31)*pulse,radius=.35+star.depth*.62;ctx.beginPath();ctx.fillStyle=`rgba(${194+Math.round(star.depth*24)},${184+Math.round(star.depth*17)},255,${alpha.toFixed(3)})`;ctx.arc(star.x,star.y,radius,0,Math.PI*2);ctx.fill()}
+  if(!runtimeLiteFx&&time>=sky.nextMeteor&&sky.meteors.length<2){spawnVoidMeteor(sky);sky.nextMeteor=time+4200+Math.random()*9000}
   for(let index=sky.meteors.length-1;index>=0;index--){const meteor=sky.meteors[index];meteor.life+=dt;meteor.x+=meteor.vx*dt;meteor.y+=meteor.vy*dt;const speed=Math.hypot(meteor.vx,meteor.vy),ux=meteor.vx/speed,uy=meteor.vy/speed,tailX=meteor.x-ux*meteor.length,tailY=meteor.y-uy*meteor.length,fade=Math.max(0,Math.min(1,meteor.life*4)*Math.min(1,(meteor.maxLife-meteor.life)*2)),gradient=ctx.createLinearGradient(tailX,tailY,meteor.x,meteor.y);gradient.addColorStop(0,"rgba(170,105,255,0)");gradient.addColorStop(.72,`hsla(${meteor.hue},95%,72%,${(.34*fade).toFixed(3)})`);gradient.addColorStop(1,`rgba(255,250,255,${(.9*fade).toFixed(3)})`);ctx.beginPath();ctx.strokeStyle=gradient;ctx.lineWidth=meteor.width;ctx.moveTo(tailX,tailY);ctx.lineTo(meteor.x,meteor.y);ctx.stroke();ctx.beginPath();ctx.fillStyle=`rgba(255,255,255,${(.8*fade).toFixed(3)})`;ctx.arc(meteor.x,meteor.y,meteor.width*1.15,0,Math.PI*2);ctx.fill();if(meteor.life>=meteor.maxLife||meteor.x<-meteor.length-50||meteor.x>sky.width+meteor.length+50||meteor.y<-meteor.length-50||meteor.y>sky.height+meteor.length+50)sky.meteors.splice(index,1)}
 }
-function animateVoidSky(time){const canvas=document.querySelector(".screen.active [data-void-sky]");if(!canvas){voidSkyRunning=false;return}if(LITE_FX||time-voidSkyLastFrame>=33){drawVoidSky(canvas,time);voidSkyLastFrame=time}if(LITE_FX){voidSkyRunning=false;return}requestAnimationFrame(animateVoidSky)}
+function animateVoidSky(time){const canvas=document.querySelector(".screen.active [data-void-sky]");if(!canvas){voidSkyRunning=false;voidSkyPerfStart=0;return}if(!voidSkyPerfStart)voidSkyPerfStart=time;voidSkyPerfFrames++;if(!runtimeLiteFx&&time-voidSkyPerfStart>=2500){const fps=voidSkyPerfFrames*1000/(time-voidSkyPerfStart);voidSkyPerfStart=time;voidSkyPerfFrames=0;if(fps<40){runtimeLiteFx=true;document.documentElement.classList.add("lite-fx");voidSkyStates.delete(canvas)}}if(runtimeLiteFx||time-voidSkyLastFrame>=42){drawVoidSky(canvas,time);voidSkyLastFrame=time}if(runtimeLiteFx){voidSkyRunning=false;return}requestAnimationFrame(animateVoidSky)}
 function startVoidSky(){if(voidSkyRunning)return;voidSkyRunning=true;requestAnimationFrame(animateVoidSky)}
 
 const sounds = Object.fromEntries(["click","tick","reveal","phase","hit","heavy","block","ko","wheel-spin","sharingan","time-stop","ultimate","beam","domain","transform"].map(name => {
@@ -217,7 +218,7 @@ function playDropSound(rarity,item){
 function triggerDropImpact(item,rarity){
   const screen=$("#rouletteScreen"),cinematic=$("#dropCinematic"),hash=hashText(itemKey(item));resetDropImpact(true);if(rarity!=="common")screen.classList.add(`rarity-theme-${rarity}`);screen.style.setProperty("--result-color",item.color||state.players[state.turn]?.universe?.color||"#ff5c4d");
   $("#dropRarity").textContent=DROP_RARITIES[rarity].label;$("#dropName").textContent=item.name;const colors=rarity==="legendary"?["#fff6af","#ffd54a","#ff7b31","#fff"]:rarity==="epic"?["#d9a4ff","#934dff","#ff64d4","#fff"]:["#8cecff","#4fbeff","#fff"];
-  const count=rarity==="legendary"?42:rarity==="epic"?30:rarity==="rare"?18:0;$("#dropParticles").innerHTML=Array.from({length:count},(_,index)=>{const angle=(index/count*360+(hash%17)).toFixed(1),distance=180+(index*37+hash)%620,size=5+(index*11+hash)%22,delay=((index%7)*.018).toFixed(3),color=colors[index%colors.length];return `<i style="--angle:${angle}deg;--distance:${distance}px;--size:${size}px;--delay:${delay}s;--particle-color:${color}"></i>`}).join("");
+  const fullCount=rarity==="legendary"?42:rarity==="epic"?30:rarity==="rare"?18:0,count=runtimeLiteFx?Math.min(18,fullCount):fullCount;$("#dropParticles").innerHTML=Array.from({length:count},(_,index)=>{const angle=(index/count*360+(hash%17)).toFixed(1),distance=180+(index*37+hash)%620,size=5+(index*11+hash)%22,delay=((index%7)*.018).toFixed(3),color=colors[index%colors.length];return `<i style="--angle:${angle}deg;--distance:${distance}px;--size:${size}px;--delay:${delay}s;--particle-color:${color}"></i>`}).join("");
   void cinematic.offsetWidth;cinematic.className=`drop-cinematic ${rarity} active`;if(rarity!=="common")screen.classList.add(`drop-${rarity}`);playDropSound(rarity,item);resetDropImpact.timer=setTimeout(()=>{cinematic.className="drop-cinematic";screen.classList.remove("drop-rare","drop-epic","drop-legendary")},rarity==="legendary"?2250:1850);
 }
 function renderWheel() {
@@ -282,12 +283,14 @@ function performSpin(forcedId) {
   });
 }
 function animateWheel(start,end,duration,slice,done){
-  const wheel=$("#wheel"),began=performance.now();let lastSector=Math.floor(start/slice);wheel.style.transition="none";wheel.classList.add("is-spinning");const compositorSpin=wheel.animate?.([{transform:`rotate(${start}deg)`},{transform:`rotate(${end}deg)`}],{duration,easing:"cubic-bezier(.33,1,.68,1)"});startWheelAudio();
+  const wheel=$("#wheel"),began=performance.now();let lastSector=Math.floor(start/slice),completed=false;wheel.style.transition="none";wheel.classList.add("is-spinning");const compositorSpin=wheel.animate?.([{transform:`rotate(${start}deg)`},{transform:`rotate(${end}deg)`}],{duration,easing:"cubic-bezier(.33,1,.68,1)"});startWheelAudio();
+  const finish=()=>{if(completed)return;completed=true;clearTimeout(watchdog);compositorSpin?.cancel();wheel.style.transform=`rotate(${end}deg)`;wheel.classList.remove("is-spinning");stopWheelAudio();done()},watchdog=setTimeout(finish,duration+300);
   function frame(now){
+    if(completed)return;
     const t=Math.min(1,(now-began)/duration),ease=1-Math.pow(1-t,3),angle=start+(end-start)*ease,sector=Math.floor(angle/slice);
     if(!compositorSpin)wheel.style.transform=`rotate(${angle}deg)`;updateWheelAudio(t);
     if(sector!==lastSector&&t<.985){playWheelTickAudio(t);lastSector=sector;}
-    if(t<1)requestAnimationFrame(frame);else{compositorSpin?.cancel();wheel.style.transform=`rotate(${end}deg)`;wheel.classList.remove("is-spinning");stopWheelAudio();done();}
+    if(t<1)requestAnimationFrame(frame);else finish();
   }
   requestAnimationFrame(frame);
 }
@@ -321,6 +324,7 @@ function drawArenaBackdrop(W,H){
 function stat(player,id,key,fallback=1){return player.attrs[id]?.stats?.[key]??fallback;}
 function addStat(player,key){return ["iq","combat","luck"].reduce((sum,id)=>sum+(player.attrs[id]?.stats?.[key]||0),0);}
 function fighterUltimate(fighter){return fighter?.ultimate||fighter?.universe?.ultimate||null}
+function isDeathNoteVerdict(fighter){return fighter?.universe?.id==="death-note"&&fighterUltimate(fighter)?.manualDeathNote===true}
 function startBattle(seed) {
   state.randomSeed=seed>>>0;state.speed=1;$("#battleSpeed").textContent="×1";$("#battleSpeed").disabled=!isHost();$("#winnerModal").classList.add("hidden");showScreen("battleScreen");
   const W=canvas.width,H=canvas.height,padding=92;
@@ -332,7 +336,7 @@ function startBattle(seed) {
     return {...player,ultimate:player.ultimate||player.universe.ultimate,x:W/2+Math.cos(angle)*(W/2-padding),y:H/2+Math.sin(angle)*(H/2-padding),vx:Math.cos(direction)*moveSpeed,vy:Math.sin(direction)*moveSpeed,moveSpeed,radius:size,hp:maxHp,maxHp,armor:Math.min(.28,r.armor+stat(player,"durability","armor",0)),damageMult:r.damage*stat(player,"strength","damage"),cooldown:p.cooldown*stat(player,"iq","cooldown"),crit:Math.max(0,Math.min(.42,(p.crit||0)+addStat(player,"crit"))),dodge:Math.max(0,Math.min(.3,(p.dodge||0)+addStat(player,"dodge"))),alive:true,shield:0,lastPower:-99,lastBasic:-99,stunnedUntil:0,dotUntil:0,nextDot:0,dotDamage:0,dotOwner:null,reviveAvailable:!!player.attrs.luck?.stats?.revive,revives:0,damageDone:0,kills:0,attacks:0,hits:0,dodges:0,blocks:0,hitFlash:0,attackFlash:0,attackAngle:direction,ultimateReadyAt:0,ultimateActiveUntil:0,ultimateDamageMult:1,ultimateSpeedMult:1,ultimateLifesteal:0,ultimateDodge:0,slowedUntil:0,slowFactor:1,cagedUntil:0,cageOwnerId:null,cageColor:null,deathNoteUsed:false,deathNoteTargetId:null};
   });
   lastUltimateEventId=0;lastActionEventId=0;
-  state.battle={fighters,projectiles:[],effects:[],blood:[],texts:[],delayed:[],ultimatePulses:[],ultimateEvent:null,ultimateEventId:0,actionEvents:[],actionEventId:0,feed:[],time:0,serverTime:0,last:performance.now(),accumulator:0,over:false,resultShown:false,lastSync:0,lastHudRender:0,powerAiming:false,aimX:W/2,aimY:H/2,zone:{left:8,right:W-8,top:8,bottom:H-8,start:50,duration:55,maxX:205,maxY:120,announced:false},raf:null};
+  state.battle={fighters,projectiles:[],effects:[],blood:[],texts:[],delayed:[],ultimatePulses:[],ultimateEvent:null,ultimateEventId:0,actionEvents:[],actionEventId:0,feed:[],feedKey:"",lastFeedSyncKey:"",time:0,serverTime:0,last:performance.now(),lastViewRender:0,accumulator:0,over:false,resultShown:false,lastSync:0,lastHudRender:0,powerAiming:false,aimX:W/2,aimY:H/2,zone:{left:8,right:W-8,top:8,bottom:H-8,start:50,duration:55,maxX:205,maxY:120,announced:false},raf:null};
   renderFighterList();addFeed("Бой начался. <b>Никаких помощников и ловушек.</b>");showBattleBanner("assets/icons/stat-combat.png","ЧИСТАЯ БИТВА","Только способности, отскоки и столкновения");
   startBattleMusic();
   state.battle.raf=requestAnimationFrame(isHost()?battleLoop:battleViewLoop);
@@ -341,7 +345,7 @@ function battleLoop(now) {
   const b=state.battle;if(!b)return;const dt=Math.min(.1,(now-b.last)/1000||0);b.last=now;b.accumulator+=dt*state.speed;
   while(!b.over&&b.accumulator>=1/60){updateBattle(1/60);b.time+=1/60;b.accumulator-=1/60;}drawBattle();syncBattle(now);b.raf=requestAnimationFrame(battleLoop);
 }
-function battleViewLoop(now) {const b=state.battle;if(!b)return;const dt=Math.min(.1,(now-b.last)/1000||0);b.last=now;if(!b.over){b.time+=dt;const correction=(b.serverTime??b.time)-b.time;b.time+=Math.max(-.08,Math.min(.08,correction))*Math.min(1,dt*8)}for(const fighter of b.fighters){if(!Number.isFinite(fighter.netX))continue;const blend=Math.min(1,dt*14);fighter.x+=(fighter.netX-fighter.x)*blend;fighter.y+=(fighter.netY-fighter.y)*blend}for(const shot of b.projectiles){shot.x+=shot.vx*dt;shot.y+=shot.vy*dt}b.effects.forEach(effect=>effect.life=Math.max(0,effect.life-dt));b.blood?.forEach(drop=>drop.life=Math.max(0,drop.life-dt));b.texts.forEach(text=>{text.life=Math.max(0,text.life-dt);text.y-=25*dt});drawBattle();b.raf=requestAnimationFrame(battleViewLoop);}
+function battleViewLoop(now) {const b=state.battle;if(!b)return;const frameInterval=runtimeLiteFx?50:33;if(now-(b.lastViewRender||0)<frameInterval){b.raf=requestAnimationFrame(battleViewLoop);return}const dt=Math.min(.1,(now-b.last)/1000||0);b.last=now;b.lastViewRender=now;if(!b.over){b.time+=dt;const correction=(b.serverTime??b.time)-b.time;b.time+=Math.max(-.08,Math.min(.08,correction))*Math.min(1,dt*8)}for(const fighter of b.fighters){if(!Number.isFinite(fighter.netX))continue;const blend=Math.min(1,dt*14);fighter.x+=(fighter.netX-fighter.x)*blend;fighter.y+=(fighter.netY-fighter.y)*blend}for(const shot of b.projectiles){shot.x+=shot.vx*dt;shot.y+=shot.vy*dt}b.effects.forEach(effect=>effect.life=Math.max(0,effect.life-dt));b.blood?.forEach(drop=>drop.life=Math.max(0,drop.life-dt));b.texts.forEach(text=>{text.life=Math.max(0,text.life-dt);text.y-=25*dt});drawBattle();b.raf=requestAnimationFrame(battleViewLoop);}
 function updateBattle(dt) {
   const b=state.battle,alive=b.fighters.filter(f=>f.alive);updateZone();updateUltimates();
   for(const f of alive){
@@ -410,13 +414,13 @@ function activatePowerFor(fighter,clientId,aimX,aimY){
 }
 function requestUltimate(){
   const fighter=localFighter(),b=state.battle;if(!fighter||!fighter.alive||!b||b.over)return;
-  if(fighter.universe.id==="death-note")return openDeathNote();
+  if(isDeathNoteVerdict(fighter))return openDeathNote();
   if(b.time<fighter.ultimateReadyAt)return showToast(`Ульта будет готова через ${(fighter.ultimateReadyAt-b.time).toFixed(1)}с`);
   if(isHost())activateUltimate(fighter);else send({type:"ability_request"});
 }
 function openDeathNote(){
-  const fighter=localFighter(),b=state.battle;if(!fighter?.alive||fighter.universe.id!=="death-note"||!b||b.over)return;
-  if(fighter.deathNoteUsed)return showToast("Ты уже вписал одно имя в эту Тетрадь смерти");
+  const fighter=localFighter(),b=state.battle;if(!fighter?.alive||!isDeathNoteVerdict(fighter)||!b||b.over)return;
+  if(fighter.deathNoteUsed)return showToast("Приговор смерти уже использован в этом бою");
   const targets=b.fighters.filter(target=>target.alive&&target!==fighter);if(!targets.length)return showToast("В тетради некому вынести приговор");
   $("#deathNoteTargets").innerHTML=targets.map(target=>`<button class="death-note-target" data-target-id="${target.id}"><span class="fighter-face" style="background:${escapeAttr(target.color)}"></span><span><b>${escapeHtml(target.name)}</b><small>${escapeHtml(target.universe.name)} · ${Math.ceil(target.hp)} HP</small></span><em>ВПИСАТЬ</em></button>`).join("");
   $("#deathNoteModal").classList.remove("hidden");
@@ -428,19 +432,19 @@ function chooseDeathNoteTarget(targetId){
 }
 function activateDeathNote(fighter,targetId,clientId=fighter?.clientId){
   const b=state.battle,target=b?.fighters.find(item=>item.id===Number(targetId));
-  if(!isHost()||!b||b.over||!fighter?.alive||fighter.universe.id!=="death-note")return;
-  if(fighter.deathNoteUsed)return powerFeedback(clientId,"Тетрадь уже использована в этом бою");
+  if(!isHost()||!b||b.over||!fighter?.alive||!isDeathNoteVerdict(fighter))return;
+  if(fighter.deathNoteUsed)return powerFeedback(clientId,"Приговор смерти уже использован в этом бою");
   if(!target?.alive||target===fighter)return powerFeedback(clientId,"Эта цель уже недоступна");
   fighter.deathNoteUsed=true;fighter.deathNoteTargetId=target.id;fighter.ultimateReadyAt=9999;
-  const event={id:++b.ultimateEventId,ownerId:fighter.id,ownerName:fighter.name,universeId:"death-note",ultimateId:"death-note-verdict",color:"#dedbd0",icon:"assets/icons/death-notebook.png",name:"ТЕТРАДЬ СМЕРТИ",description:`Имя «${target.name}» записано. Сердце остановится через 40 секунд.`,type:"execute",visual:"notebook",at:b.time};
+  const event={id:++b.ultimateEventId,ownerId:fighter.id,ownerName:fighter.name,universeId:"death-note",ultimateId:"ultimate-death-note",color:"#dedbd0",icon:"assets/icons/death-notebook.png",name:"ПРИГОВОР СМЕРТИ",description:`Имя «${target.name}» записано. Сердце остановится через 40 секунд.`,type:"execute",visual:"notebook",at:b.time};
   b.ultimateEvent=event;lastUltimateEventId=event.id;showUltimateCinematic(event);addText(target.x,target.y,"ИМЯ ЗАПИСАНО","#f4f1e8");
   addFeed(`<b>${escapeHtml(fighter.name)}</b> открывает Тетрадь смерти и вписывает имя <b>${escapeHtml(target.name)}</b>. Приговор исполнится через 40 секунд.`);
-  b.ultimatePulses.push({at:b.time+40,kind:"deathNote",ownerId:fighter.id,targetId:target.id,targetName:target.name,name:"Тетрадь смерти",visual:"notebook"});
+  b.ultimatePulses.push({at:b.time+40,kind:"deathNote",ownerId:fighter.id,targetId:target.id,targetName:target.name,name:"Приговор смерти",visual:"notebook"});
   for(let ring=0;ring<5;ring++)b.effects.push({type:"ultimate",visual:"notebook",x:target.x,y:target.y,color:"#f4f1e8",life:.5+ring*.14,maxLife:.5+ring*.14,radius:35+ring*27});
 }
 function activateUltimate(fighter){
   const b=state.battle,ultimate=fighterUltimate(fighter);if(!isHost()||!b||b.over||!fighter?.alive||!ultimate||b.time<fighter.ultimateReadyAt)return;
-  if(fighter.universe.id==="death-note")return powerFeedback(fighter.clientId,"Нажми F и выбери имя в Тетради смерти");
+  if(isDeathNoteVerdict(fighter))return powerFeedback(fighter.clientId,"Нажми F и выбери имя для Приговора смерти");
   fighter.ultimateReadyAt=b.time+ultimate.cooldown;fighter.ultimateActiveUntil=b.time+ultimate.duration;
   fighter.ultimateDamageMult=1;fighter.ultimateSpeedMult=1;fighter.ultimateLifesteal=0;fighter.ultimateDodge=0;
   const event={id:++b.ultimateEventId,ownerId:fighter.id,ownerName:fighter.name,universeId:fighter.universe.id,ultimateId:ultimate.id,color:fighter.universe.color,icon:ultimate.icon,name:ultimate.name,description:ultimate.description,type:ultimate.type,visual:ultimate.visual,at:b.time};
@@ -478,7 +482,7 @@ function updateUltimates(){
     if(pulse.done||b.time<pulse.at)continue;pulse.done=true;
     const owner=b.fighters.find(f=>f.id===pulse.ownerId);
     if(pulse.kind==="deathNote"){
-      const target=b.fighters.find(f=>f.id===pulse.targetId);if(!target?.alive||!owner)continue;target.reviveAvailable=false;target.hp=0;knockOut(target,owner,{name:"Тетрадь смерти"},true);
+      const target=b.fighters.find(f=>f.id===pulse.targetId);if(!target?.alive||!owner)continue;target.reviveAvailable=false;target.hp=0;knockOut(target,owner,{name:"Приговор смерти"},true);
     }else if(!owner?.alive)continue;
     else if(pulse.kind==="execute"){
       const target=b.fighters.find(f=>f.id===pulse.targetId);if(!target?.alive)continue;
@@ -528,7 +532,7 @@ function addBlood(target,damage=20,fatal=false){
   for(let index=0;index<amount;index++){const angle=Math.random()*Math.PI*2,distance=(fatal?18:8)+Math.random()*(fatal?72:34),size=(fatal?4:2)+Math.random()*(fatal?10:6),life=(fatal?4.8:2.2)+Math.random()*2;b.blood.push({x:target.x+Math.cos(angle)*distance,y:target.y+Math.sin(angle)*distance*.62,size,angle:Math.random()*Math.PI,life,maxLife:life});}b.blood=b.blood.slice(-96);
 }
 function dealDamage(target,raw,attacker,power,critical){if(!target.alive)return;const b=state.battle,attackerUltimate=b.time<attacker.ultimateActiveUntil,targetUltimate=b.time<target.ultimateActiveUntil,effectiveDodge=Math.min(.65,target.dodge+(targetUltimate?target.ultimateDodge:0));if(!power.sureHit&&random()<effectiveDodge){target.dodges++;addText(target.x,target.y,"УКЛОН",target.color);b.effects.push({type:"dodge",x:target.x,y:target.y,color:target.color,life:.35,maxLife:.35});return}const armorPen=attackerUltimate&&fighterUltimate(attacker)?.type==="armorBreak"?1:(power.armorPen||0);let damage=raw*(attackerUltimate?attacker.ultimateDamageMult:1)*(1-target.armor*(1-armorPen));if(critical)damage*=1.55;if(target.shield>0){const blocked=Math.min(target.shield,damage);target.shield-=blocked;damage-=blocked;target.blocks++;if(blocked>0)playSound("block",.24)}damage=Math.max(0,damage);target.hp-=damage;target.hitFlash=1;attacker.damageDone+=damage;attacker.hits++;if(damage>0)addBlood(target,damage);const lifesteal=(power.lifesteal||0)+(attackerUltimate?attacker.ultimateLifesteal:0);if(lifesteal)attacker.hp=Math.min(attacker.maxHp,attacker.hp+damage*lifesteal);if(power.dot){target.dotUntil=b.time+4;target.dotDamage=power.dot;target.dotOwner=attacker;target.nextDot=b.time+1}if(power.stun)target.stunnedUntil=Math.max(target.stunnedUntil,b.time+power.stun);if(power.knockback){const angle=Math.atan2(target.y-attacker.y,target.x-attacker.x),force=power.knockback;target.vx+=Math.cos(angle)*force;target.vy+=Math.sin(angle)*force}addText(target.x,target.y,`${critical?"КРИТ ":""}-${Math.round(damage)}`,critical?"#ffe95b":"#fff");b.effects.push({type:power.basicVisual?"basicHit":"hit",visual:power.basicVisual,angle:power.basicAngle??attacker.attackAngle,x:target.x,y:target.y,color:attacker.universe.color,life:power.basicVisual?.5:.32,maxLife:power.basicVisual?.5:.32,radius:target.radius+18});playSound(damage>55?"heavy":"hit",Math.min(.55,.16+damage/220),.9+random()*.18);if(target.hp<=0)knockOut(target,attacker,power)}
-function knockOut(target,attacker,power,ignoreRevive=false){if(target.reviveAvailable&&!ignoreRevive){target.reviveAvailable=false;target.revives++;target.hp=target.maxHp*.18;target.shield=60;target.stunnedUntil=state.battle.time+1;addFeed(`<b>${escapeHtml(target.name)}</b> спасается сюжетной бронёй`);return}target.hp=0;target.alive=false;addBlood(target,120,true);attacker.kills++;playSound("ko",.7);if(power.name==="Тетрадь смерти")addFeed(`Сердце <b>${escapeHtml(target.name)}</b> остановилось через 40 секунд после записи имени.`,true);else addFeed(`<b>${escapeHtml(attacker.name)}</b> выбивает ${escapeHtml(target.name)} силой «${escapeHtml(power.name)}»`,true)}
+function knockOut(target,attacker,power,ignoreRevive=false){if(target.reviveAvailable&&!ignoreRevive){target.reviveAvailable=false;target.revives++;target.hp=target.maxHp*.18;target.shield=60;target.stunnedUntil=state.battle.time+1;addFeed(`<b>${escapeHtml(target.name)}</b> спасается сюжетной бронёй`);return}target.hp=0;target.alive=false;addBlood(target,120,true);attacker.kills++;playSound("ko",.7);if(power.name==="Приговор смерти")addFeed(`Сердце <b>${escapeHtml(target.name)}</b> остановилось через 40 секунд после записи имени.`,true);else addFeed(`<b>${escapeHtml(attacker.name)}</b> выбивает ${escapeHtml(target.name)} силой «${escapeHtml(power.name)}»`,true)}
 function addText(x,y,text,color){state.battle.texts.push({x,y,text,color,life:.8})}
 function addFeed(html,ko=false){const b=state.battle;b.feed.unshift({html,ko,time:b.time});b.feed=b.feed.slice(0,9);renderFeed()}
 function renderFeed(){$("#battleFeed").innerHTML=state.battle.feed.map(item=>`<div class="feed-item ${item.ko?"ko":""}">${item.html}<br><small>${formatTime(item.time)}</small></div>`).join("")}
@@ -540,9 +544,9 @@ function renderSkillHud(){
 }
 function renderAbilityHud(){
   const hud=$("#abilityHud"),fighter=localFighter(),b=state.battle;if(!fighter||!b){hud.classList.add("hidden");return}
-  if(fighter.universe.id==="death-note"){
+  if(isDeathNoteVerdict(fighter)){
     const pending=b.ultimatePulses.find(pulse=>pulse.kind==="deathNote"&&!pulse.done&&pulse.ownerId===fighter.id),remaining=pending?Math.max(0,pending.at-b.time):0,ready=fighter.alive&&!fighter.deathNoteUsed;
-    hud.classList.remove("hidden");hud.classList.toggle("ready",ready);hud.classList.toggle("disabled",!fighter.alive||fighter.deathNoteUsed);hud.style.setProperty("--ability-color","#dedbd0");$("#abilityIcon").src="assets/icons/death-notebook.png";$("#abilityName").textContent="ТЕТРАДЬ СМЕРТИ";$("#abilityBar").style.width=`${ready?100:0}%`;$("#abilityStatus").textContent=!fighter.alive?"БОЕЦ ВЫБЫЛ":pending?`ИМЯ ЗАПИСАНО · ${Math.ceil(remaining)}с`:fighter.deathNoteUsed?"ТЕТРАДЬ ИСПОЛЬЗОВАНА":"F — ОТКРЫТЬ ДНЕВНИК";return;
+    hud.classList.remove("hidden");hud.classList.toggle("ready",ready);hud.classList.toggle("disabled",!fighter.alive||fighter.deathNoteUsed);hud.style.setProperty("--ability-color","#dedbd0");$("#abilityIcon").src="assets/icons/death-notebook.png";$("#abilityName").textContent="ПРИГОВОР СМЕРТИ";$("#abilityBar").style.width=`${ready?100:0}%`;$("#abilityStatus").textContent=!fighter.alive?"БОЕЦ ВЫБЫЛ":pending?`ИМЯ ЗАПИСАНО · ${Math.ceil(remaining)}с`:fighter.deathNoteUsed?"ПРИГОВОР ИСПОЛЬЗОВАН":"F — ОТКРЫТЬ ДНЕВНИК";return;
   }
   const ultimate=fighterUltimate(fighter),remaining=Math.max(0,fighter.ultimateReadyAt-b.time),active=b.time<fighter.ultimateActiveUntil,ready=fighter.alive&&!active&&remaining<=0;
   hud.classList.remove("hidden");hud.classList.toggle("ready",ready);hud.classList.toggle("disabled",!fighter.alive);hud.style.setProperty("--ability-color",fighter.universe.color);
@@ -560,16 +564,16 @@ function updateDeathNoteWarning(){
 const FIGHTER_SYNC_KEYS=["vx","vy","hp","alive","shield","lastPower","lastBasic","attackAngle","stunnedUntil","dotUntil","nextDot","dotDamage","nextRegen","reviveAvailable","revives","damageDone","kills","attacks","hits","dodges","blocks","hitFlash","attackFlash","ultimateReadyAt","ultimateActiveUntil","ultimateDamageMult","ultimateSpeedMult","ultimateLifesteal","ultimateDodge","slowedUntil","slowFactor","cagedUntil","cageOwnerId","cageColor","deathNoteUsed","deathNoteTargetId"];
 function compactFighter(fighter){const value={id:fighter.id,x:Math.round(fighter.x*10)/10,y:Math.round(fighter.y*10)/10,dotOwnerId:fighter.dotOwner?.id??fighter.dotOwnerId??null};for(const key of FIGHTER_SYNC_KEYS)value[key]=fighter[key];return value}
 function syncBattle(now){
-  const b=state.battle;if(!isHost()||now-b.lastSync<80)return;b.lastSync=now;
-  send({type:"battle_state",battle:{time:b.time,over:b.over,randomSeed:state.randomSeed,zone:b.zone,fighters:b.fighters.map(compactFighter),projectiles:b.projectiles,effects:b.effects,blood:b.blood,texts:b.texts,delayed:b.delayed,ultimatePulses:b.ultimatePulses,ultimateEvent:b.ultimateEvent,ultimateEventId:b.ultimateEventId,actionEvents:b.actionEvents,actionEventId:b.actionEventId,feed:b.feed}});
+  const b=state.battle;if(!isHost()||now-b.lastSync<150)return;b.lastSync=now;const feedKey=b.feed.map(item=>`${item.time}:${item.html}`).join("|"),feed=feedKey!==b.lastFeedSyncKey?b.feed:undefined;b.lastFeedSyncKey=feedKey;
+  send({type:"battle_state",battle:{time:b.time,over:b.over,randomSeed:state.randomSeed,zone:b.zone,fighters:b.fighters.map(compactFighter),projectiles:b.projectiles.slice(-48),effects:b.effects.slice(-32),texts:b.texts.slice(-12),delayed:b.delayed.slice(-24),ultimatePulses:b.ultimatePulses,ultimateEvent:b.ultimateEvent,ultimateEventId:b.ultimateEventId,actionEvents:b.actionEvents,actionEventId:b.actionEventId,feed}});
 }
 function applyBattleSnapshot(snapshot){
   const b=state.battle;if(!b||!snapshot)return;const event=snapshot.ultimateEvent;
   b.serverTime=snapshot.time;if(Math.abs(b.time-snapshot.time)>1)b.time=snapshot.time;b.over=snapshot.over;b.zone=snapshot.zone;state.randomSeed=snapshot.randomSeed??state.randomSeed;
-  for(const remote of snapshot.fighters){const fighter=b.fighters.find(item=>item.id===remote.id);if(!fighter)continue;const dx=remote.x-fighter.x,dy=remote.y-fighter.y;if(!Number.isFinite(fighter.netX)||Math.hypot(dx,dy)>220){fighter.x=remote.x;fighter.y=remote.y}fighter.netX=remote.x;fighter.netY=remote.y;for(const key of FIGHTER_SYNC_KEYS)fighter[key]=remote[key];fighter.dotOwnerId=remote.dotOwnerId;}
-  b.projectiles=snapshot.projectiles||[];b.effects=snapshot.effects||[];b.blood=snapshot.blood||[];b.texts=snapshot.texts||[];b.delayed=snapshot.delayed||[];b.ultimatePulses=snapshot.ultimatePulses||[];b.ultimateEvent=event;b.ultimateEventId=snapshot.ultimateEventId||0;b.actionEvents=snapshot.actionEvents||[];b.actionEventId=snapshot.actionEventId||0;
+  for(const remote of snapshot.fighters||[]){const fighter=b.fighters.find(item=>item.id===remote.id);if(!fighter)continue;const previousHp=fighter.hp,wasAlive=fighter.alive,dx=remote.x-fighter.x,dy=remote.y-fighter.y;if(Number.isFinite(previousHp)&&remote.hp<previousHp)addBlood(fighter,Math.min(120,previousHp-remote.hp),wasAlive&&!remote.alive);if(!Number.isFinite(fighter.netX)||Math.hypot(dx,dy)>220){fighter.x=remote.x;fighter.y=remote.y}fighter.netX=remote.x;fighter.netY=remote.y;for(const key of FIGHTER_SYNC_KEYS)fighter[key]=remote[key];fighter.dotOwnerId=remote.dotOwnerId;}
+  b.projectiles=snapshot.projectiles||[];b.effects=snapshot.effects||[];b.texts=snapshot.texts||[];b.delayed=snapshot.delayed||[];b.ultimatePulses=snapshot.ultimatePulses||[];b.ultimateEvent=event;b.ultimateEventId=snapshot.ultimateEventId||0;b.actionEvents=snapshot.actionEvents||[];b.actionEventId=snapshot.actionEventId||0;
   for(const action of b.actionEvents){if(action.id<=lastActionEventId)continue;const owner=b.fighters.find(fighter=>fighter.id===action.ownerId);if(action.kind==="basic")playBasicSound(action.style,action.id,action.universeId,action.sound);else if(owner)playAbilitySound(owner.power,action.universeId);lastActionEventId=Math.max(lastActionEventId,action.id)}
-  const feed=snapshot.feed||[],feedKey=feed.map(item=>`${item.time}:${item.html}`).join("|");if(feedKey!==b.feedKey){b.feed=feed;b.feedKey=feedKey;renderFeed()}
+  if(snapshot.feed){const feed=snapshot.feed,feedKey=feed.map(item=>`${item.time}:${item.html}`).join("|");if(feedKey!==b.feedKey){b.feed=feed;b.feedKey=feedKey;renderFeed()}}
   if(event?.id>lastUltimateEventId){lastUltimateEventId=event.id;showUltimateCinematic(event)}
 }
 

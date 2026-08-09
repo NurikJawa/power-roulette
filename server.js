@@ -53,7 +53,7 @@ function broadcast(room, payload, except = null) {
   for (const client of room.clients.values()) {
     if (client.ws === except || client.ws.readyState !== WebSocket.OPEN) continue;
     // Battle frames are disposable: never build a seconds-long queue on a slower client.
-    if (payload.type === "battle_state" && client.ws.bufferedAmount > 128 * 1024) continue;
+    if (payload.type === "battle_state" && client.ws.bufferedAmount > 32 * 1024) continue;
     client.ws.send(raw);
   }
 }
@@ -131,7 +131,9 @@ wss.on("connection", ws => {
       broadcast(room, message);
       if (message.type === "home") { room.started = false; publish(room); }
     } else if (message.type === "battle_state" && isHost && room.started) {
-      broadcast(room, message, ws);
+      const now=Date.now();
+      if (now-(room.lastBattleBroadcast||0)<70 || raw.length>96*1024) return;
+      room.lastBattleBroadcast=now; broadcast(room, message, ws);
     } else if (message.type === "battle_end" && isHost && room.started) {
       broadcast(room, message, ws);
     }

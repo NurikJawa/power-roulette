@@ -150,7 +150,7 @@ const UNIVERSES = [
 
 const ULTIMATES = {
   'opm': {id:'ultimate-opm',name:'СЕРЬЁЗНЫЙ РЕЖИМ',cooldown:32,duration:1.4,type:'nova',damage:170,description:'Ударная волна проходит через всю арену.'},
-  'death-note': {id:'ultimate-death-note',name:'ПРИГОВОР ТЕТРАДИ',cooldown:36,duration:5,type:'execute',damage:230,description:'Имя самого раненого врага появляется в тетради.'},
+  'death-note': {id:'ultimate-death-note',name:'ПРИГОВОР СМЕРТИ',cooldown:9999,duration:40,type:'execute',damage:9999,manualDeathNote:true,description:'Один раз за бой открывает дневник: выбранный игрок погибает ровно через 40 секунд.'},
   'jojo': {id:'ultimate-jojo',name:'ZA WARUDO',cooldown:34,duration:4,type:'timeStop',damage:65,description:'Все противники полностью застывают, владелец продолжает бой.'},
   'dragon-ball': {id:'ultimate-dragon-ball',name:'СУПЕР-САЯН',cooldown:32,duration:9,type:'buff',damage:1.45,speed:1.45,description:'Золотая аура резко усиливает скорость и урон.'},
   'naruto': {id:'ultimate-naruto',name:'ШАРИНГАН',cooldown:30,duration:7,type:'sharingan',slow:.38,dodge:.25,description:'Все враги замедляются, движения читаются заранее.'},
@@ -197,7 +197,7 @@ const EXTRA_ULTIMATES = {
     ultimate('opm-psychic','ПСИХИЧЕСКИЙ ШТОРМ','domain',15,33,5,'Ближайший враг запирается в телекинетической клетке.',{tickRate:.5,cage:true,stun:true,visual:'psychic'}),
     ultimate('opm-incinerate','ЯДРО ИСПЕПЕЛЕНИЯ','bladeStorm',27,30,4.5,'Серия раскалённых залпов прорезает арену.',{visual:'fire'})],
   'death-note':[
-    ultimate('death-40','СОРОК СЕКУНД','execute',245,38,5,'Обратный отсчёт заканчивается смертельным приговором.',{visual:'notebook'}),
+    ultimate('death-40','КОНТРАКТ С РЮКОМ','berserk',1.34,33,8,'Сделка с богом смерти ускоряет владельца и превращает нанесённый урон в здоровье.',{speed:1.28,heal:.22,visual:'shinigami'}),
     ultimate('death-eyes','ГЛАЗА СИНИГАМИ','sharingan',0,30,7,'Видит слабейшего, замедляет врагов и читает их движения.',{slow:.52,dodge:.22,visual:'eyes'}),
     ultimate('death-perfect-plan','ИДЕАЛЬНЫЙ ПЛАН','buff',1.28,29,8,'Холодный расчёт ускоряет атаки и повышает уклонение.',{speed:1.3,dodge:.16,visual:'clock'}),
     ultimate('death-heart','СЕРДЕЧНЫЙ ПРИСТУП','bladeStorm',24,32,5,'Чёрные метки пульсируют по всем противникам.',{visual:'notebook'})],

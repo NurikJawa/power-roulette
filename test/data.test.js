@@ -111,11 +111,29 @@ test('локальный набор звуков способностей уст
 
 test('Тетрадь смерти использует ручной выбор и канонический таймер 40 секунд', () => {
   const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
+  const deathNote = UNIVERSES.find(item => item.id === 'death-note');
+  assert.equal(deathNote.ultimates.length, 5);
+  assert.equal(deathNote.ultimates.filter(item => item.manualDeathNote).length, 1);
+  assert.equal(deathNote.ultimates.find(item => item.manualDeathNote).name, 'ПРИГОВОР СМЕРТИ');
   assert.match(source, /function openDeathNote\(\)/);
+  assert.match(source, /function isDeathNoteVerdict\(fighter\)/);
   assert.match(source, /kind:"deathNote"/);
   assert.match(source, /at:b\.time\+40/);
   assert.match(source, /remaining>5/);
   assert.match(source, /deathNoteUsed/);
+  assert.doesNotMatch(source, /if\(fighter\.universe\.id==="death-note"\)return openDeathNote/);
+});
+
+test('снимки боя облегчены для не-хоста и гостевой рендер ограничен', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
+  const server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+  assert.match(source, /now-b\.lastSync<150/);
+  assert.match(source, /projectiles:b\.projectiles\.slice\(-48\)/);
+  assert.match(source, /effects:b\.effects\.slice\(-32\)/);
+  assert.doesNotMatch(source, /blood:b\.blood/);
+  assert.match(source, /frameInterval=runtimeLiteFx\?50:33/);
+  assert.match(server, /bufferedAmount > 32 \* 1024/);
+  assert.match(server, /raw\.length>96\*1024/);
 });
 
 test('способность E удерживается для прицела и отправляет сетевые координаты', () => {
@@ -156,7 +174,8 @@ test('современная фиолетовая тема имеет незав
   assert.doesNotMatch(theme, /@keyframes void-stars-drift|@keyframes void-comet/);
   assert.match(source, /function makeVoidStar\(/);
   assert.match(source, /function spawnVoidMeteor\(/);
-  assert.match(source, /time-voidSkyLastFrame>=33/);
+  assert.match(source, /time-voidSkyLastFrame>=42/);
+  assert.match(source, /if\(fps<40\)/);
   assert.match(source, /ctx\.createLinearGradient\(tailX,tailY,meteor\.x,meteor\.y\)/);
   assert.match(source, /tailX=meteor\.x-ux\*meteor\.length/);
   assert.ok(Buffer.byteLength(theme) < 40000, 'Процедурный фон не должен раздувать CSS');
@@ -167,5 +186,6 @@ test('современная фиолетовая тема имеет незав
   assert.match(source, /function stopWheelAudio\(/);
   assert.match(source, /wheel\.animate\?\.\(/);
   assert.match(source, /classList\.add\("is-spinning"\)/);
+  assert.match(source, /watchdog=setTimeout\(finish,duration\+300\)/);
   assert.match(source, /stopWheelAudio\(\);done\(\)/);
 });
