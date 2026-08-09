@@ -151,6 +151,7 @@ test('современная фиолетовая тема остаётся лё
   const background = path.join(root, 'assets', 'roulette-cosmos-v3.webp');
   assert.ok(fs.existsSync(background), 'Нет нового фона рулетки');
   assert.ok(fs.statSync(background).size > 50000 && fs.statSync(background).size < 200000, 'Фон должен быть качественным, но лёгким');
+  assert.match(fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8'), /"\.webp":"image\/webp"/);
   assert.match(html, /rel="preload" href="assets\/roulette-cosmos-v3\.webp"/);
   assert.match(html, /href="theme-v2\.css"/);
   assert.match(theme, /\.lite-fx/);
