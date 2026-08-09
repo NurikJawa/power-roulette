@@ -16,6 +16,4 @@ The Sharingan ultimate graphic is a transparent PNG rendering of [Sharingan Trip
 
 `arena-multiverse-v2.png` was generated specifically for this project with OpenAI image generation from an original prompt; it contains no third-party characters, logos or text.
 
-`roulette-cosmos-v3.webp` was generated specifically for this project with OpenAI image generation from an original prompt; it contains no third-party characters, logos or text.
-
 Anime and manga names are used only to identify the fictional fan-game universes. This project is unofficial and is not affiliated with their copyright holders.

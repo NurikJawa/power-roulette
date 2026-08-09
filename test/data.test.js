@@ -143,17 +143,18 @@ test('рулетка имеет четыре редкости и отдельн�
   assert.match(css, /@keyframes screen-impact-hard/);
 });
 
-test('современная фиолетовая тема остаётся лёгкой, а звук колеса не наслаивается', () => {
+test('современная фиолетовая тема имеет процедурный фон, а звук колеса не наслаивается', () => {
   const root = path.join(__dirname, '..', 'public');
   const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const theme = fs.readFileSync(path.join(root, 'theme-v2.css'), 'utf8');
-  const background = path.join(root, 'assets', 'roulette-cosmos-v3.webp');
-  assert.ok(fs.existsSync(background), 'Нет нового фона рулетки');
-  assert.ok(fs.statSync(background).size > 50000 && fs.statSync(background).size < 200000, 'Фон должен быть качественным, но лёгким');
-  assert.match(fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8'), /"\.webp":"image\/webp"/);
-  assert.match(html, /rel="preload" href="assets\/roulette-cosmos-v3\.webp"/);
   assert.match(html, /href="theme-v2\.css"/);
+  assert.doesNotMatch(html, /roulette-cosmos-v3/);
+  assert.doesNotMatch(theme, /url\([^)]*roulette-cosmos-v3/);
+  assert.match(theme, /@keyframes void-nebula-drift/);
+  assert.match(theme, /@keyframes void-stars-drift/);
+  assert.match(theme, /@keyframes void-comet/);
+  assert.ok(Buffer.byteLength(theme) < 40000, 'Процедурный фон не должен раздувать CSS');
   assert.match(theme, /\.lite-fx/);
   assert.doesNotMatch(theme, /backdrop-filter:blur\([1-9]/);
   assert.match(source, /function startWheelAudio\(/);
