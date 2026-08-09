@@ -149,7 +149,7 @@ function weightedPick(items) {
 const DROP_RARITIES={common:{label:"ОБЫЧНЫЙ РЕЗУЛЬТАТ"},rare:{label:"РЕДКИЙ РЕЗУЛЬТАТ"},epic:{label:"ЭПИЧЕСКИЙ РЕЗУЛЬТАТ"},legendary:{label:"ЛЕГЕНДАРНОЕ ВЫПАДЕНИЕ"}};
 const LEGENDARY_UNIVERSES=new Set(["opm","dragon-ball","gurren","slime","misfit"]),EPIC_UNIVERSES=new Set(["naruto","bleach","one-piece","jujutsu","attack-titan","solo-leveling","eminence","overlord","fate","ragnarok"]);
 function rarityForResult(item,phase=currentPhase()){
-  if(phase.type==="universal"){const weight=item.weight??99;return weight<=6?"legendary":weight<=20?"epic":weight<=29?"rare":"common"}
+  if(phase.type==="universal")return item.rarity||"common";
   if(phase.type==="universe")return LEGENDARY_UNIVERSES.has(item.id)?"legendary":EPIC_UNIVERSES.has(item.id)?"epic":"rare";
   if(phase.type==="race"){
     if(/Ооцуцуки|Истинный дракон|Божественный дух|Антиспираль|Монарх|Правитель|Высшая луна|Каменный человек|Бог$|Бог смерти/i.test(item.name))return "legendary";

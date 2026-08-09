@@ -53,6 +53,18 @@ test('есть семь общих рулеток по пять результа
   assert.ok(heights.every(option => !/15\s*метр/i.test(option.name)), 'Несбалансированный рост 15 метров не удалён');
 });
 
+test('редкость общих характеристик зависит от пользы, а не от шанса выпадения', () => {
+  const option = (rouletteId, optionId) => UNIVERSAL_ROULETTES.find(roulette => roulette.id === rouletteId).options.find(item => item.id === optionId);
+  for (const [rouletteId, optionId] of [['strength', 'weak'], ['iq', 'instinct'], ['speed', 'slow'], ['durability', 'glass'], ['combat', 'rookie'], ['luck', 'cursed']]) {
+    assert.equal(option(rouletteId, optionId).rarity, 'common', `${rouletteId}/${optionId} ошибочно считается редким`);
+  }
+  for (const [rouletteId, optionId] of [['strength', 'cosmic'], ['iq', 'omniscient'], ['speed', 'instant'], ['durability', 'absolute'], ['combat', 'war-god'], ['luck', 'plot-armor']]) {
+    assert.equal(option(rouletteId, optionId).rarity, 'legendary', `${rouletteId}/${optionId} должен быть легендарным`);
+  }
+  assert.equal(option('height', 'tiny').rarity, 'rare', 'Маленькая цель имеет сильный бонус к уклонению, но не должна быть эпической');
+  assert.ok(UNIVERSAL_ROULETTES.flatMap(roulette => roulette.options).every(item => ['common', 'rare', 'epic', 'legendary'].includes(item.rarity)));
+});
+
 test('все предметы имеют локальные PNG с ненулевым размером', () => {
   const files = [];
   for (const universe of UNIVERSES) {

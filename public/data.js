@@ -431,6 +431,12 @@ const UNIVERSAL_ROULETTES = [
   {id:'luck',name:'УДАЧА',icon:icon('stat-luck'),options:[
     {id:'cursed',name:'Проклятая',label:'−5% крит',weight:12,stats:{crit:-.05},icon:icon('luck-1')},{id:'ordinary',name:'Обычная',label:'Без изменений',weight:34,stats:{},icon:icon('luck-2')},{id:'lucky',name:'Везучая',label:'+4% уклон',weight:29,stats:{dodge:.04},icon:icon('luck-3')},{id:'blessed',name:'Благословенная',label:'+8% крит и уклон',weight:19,stats:{dodge:.08,crit:.08},icon:icon('luck-4')},{id:'plot-armor',name:'Сюжетная броня',label:'Одно возрождение с 18% HP',weight:6,stats:{revive:true},icon:icon('luck-5')}]}];
 
+const UNIVERSAL_RARITY_ORDER=['common','common','rare','epic','legendary'];
+const HEIGHT_RARITIES={tiny:'rare',short:'common',average:'common',giant:'rare',tall:'rare'};
+for(const roulette of UNIVERSAL_ROULETTES){
+  roulette.options.forEach((option,index)=>{option.rarity=roulette.id==='height'?HEIGHT_RARITIES[option.id]:UNIVERSAL_RARITY_ORDER[index];});
+}
+
 const PHASES = [
   {id:'universe',name:'ВСЕЛЕННАЯ',short:'ВЕРС',type:'universe'},
   {id:'race',name:'РАСА ВСЕЛЕННОЙ',short:'РАСА',type:'race'},
