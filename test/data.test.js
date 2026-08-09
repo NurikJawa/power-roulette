@@ -124,16 +124,23 @@ test('Тетрадь смерти использует ручной выбор �
   assert.doesNotMatch(source, /if\(fighter\.universe\.id==="death-note"\)return openDeathNote/);
 });
 
-test('снимки боя облегчены для не-хоста и гостевой рендер ограничен', () => {
+test('большая комната ограничивает рендер, звук и сетевую нагрузку', () => {
   const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
   const server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
-  assert.match(source, /now-b\.lastSync<150/);
+  assert.match(source, /function crowdedBattle\(\)/);
+  assert.match(source, /function battleRenderInterval\(host=false\)/);
+  assert.match(source, /syncInterval=crowdedBattle\(\)\?180:150/);
   assert.match(source, /projectiles:b\.projectiles\.slice\(-48\)/);
-  assert.match(source, /effects:b\.effects\.slice\(-32\)/);
+  assert.match(source, /effects:b\.effects\.slice\(crowdedBattle\(\)\?-24:-32\)/);
   assert.doesNotMatch(source, /blood:b\.blood/);
-  assert.match(source, /frameInterval=runtimeLiteFx\?50:33/);
+  assert.match(source, /frameInterval=battleRenderInterval\(false\)/);
+  assert.match(source, /maxChannels=limit\+\(priority\?4:0\)/);
+  assert.match(source, /impactGap=crowdedBattle\(\)\?75:42/);
+  assert.match(source, /fighter\.lastBasic=b\.time;send\(\{type:"attack_request",x,y\}\)/);
   assert.match(server, /bufferedAmount > 32 \* 1024/);
   assert.match(server, /raw\.length>96\*1024/);
+  assert.match(server, /function allowAction\(client,key,gap\)/);
+  assert.match(server, /broadcast\(room, message, ws, raw\)/);
 });
 
 test('способность E удерживается для прицела и отправляет сетевые координаты', () => {

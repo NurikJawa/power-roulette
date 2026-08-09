@@ -41,6 +41,7 @@ const APPEARANCE_OPTIONS = {
 function cleanAppearance(value = {}) {
   return Object.fromEntries(Object.entries(APPEARANCE_OPTIONS).map(([key,allowed])=>[key,allowed.has(value?.[key])?value[key]:allowed.values().next().value]));
 }
+function allowAction(client,key,gap){const now=Date.now(),field=`last_${key}`;if(now-(client[field]||0)<gap)return false;client[field]=now;return true}
 function makeCode() {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code;
@@ -48,8 +49,8 @@ function makeCode() {
   return code;
 }
 function send(ws, payload) { if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify(payload)); }
-function broadcast(room, payload, except = null) {
-  const raw = JSON.stringify(payload);
+function broadcast(room, payload, except = null, encoded = null) {
+  const raw = encoded || JSON.stringify(payload);
   for (const client of room.clients.values()) {
     if (client.ws === except || client.ws.readyState !== WebSocket.OPEN) continue;
     // Battle frames are disposable: never build a seconds-long queue on a slower client.
@@ -112,17 +113,17 @@ wss.on("connection", ws => {
       leave(ws); send(ws, { type:"left" });
     } else if (message.type === "start" && isHost && room.clients.size >= 2) {
       room.started = true; broadcast(room, { type:"start", players:[...room.clients.values()].map(item=>item.player) }); publish(room);
-    } else if (message.type === "spin_request" && room.started) {
+    } else if (message.type === "spin_request" && room.started && allowAction(client,"spin",300)) {
       send(room.clients.get(room.hostId)?.ws, { type:"spin_request", senderId:ws.clientId });
-    } else if (message.type === "ability_request" && room.started) {
+    } else if (message.type === "ability_request" && room.started && allowAction(client,"ability",180)) {
       send(room.clients.get(room.hostId)?.ws, { type:"ability_request", senderId:ws.clientId });
-    } else if (message.type === "death_note_request" && room.started) {
+    } else if (message.type === "death_note_request" && room.started && allowAction(client,"death_note",300)) {
       const rawTarget=Number(message.targetId),targetId=Number.isFinite(rawTarget)?Math.max(0,Math.min(9,Math.trunc(rawTarget))):-1;
       send(room.clients.get(room.hostId)?.ws, { type:"death_note_request", senderId:ws.clientId, targetId });
-    } else if (message.type === "power_request" && room.started) {
+    } else if (message.type === "power_request" && room.started && allowAction(client,"power",100)) {
       const x=Math.max(0,Math.min(1100,Number(message.x)||0)),y=Math.max(0,Math.min(680,Number(message.y)||0));
       send(room.clients.get(room.hostId)?.ws, { type:"power_request", senderId:ws.clientId, x, y });
-    } else if (message.type === "attack_request" && room.started) {
+    } else if (message.type === "attack_request" && room.started && allowAction(client,"attack",70)) {
       const x=Math.max(0,Math.min(1100,Number(message.x)||0)),y=Math.max(0,Math.min(680,Number(message.y)||0));
       send(room.clients.get(room.hostId)?.ws, { type:"attack_request", senderId:ws.clientId, x, y });
     } else if (message.type === "power_feedback" && isHost && room.started) {
@@ -133,7 +134,7 @@ wss.on("connection", ws => {
     } else if (message.type === "battle_state" && isHost && room.started) {
       const now=Date.now();
       if (now-(room.lastBattleBroadcast||0)<70 || raw.length>96*1024) return;
-      room.lastBattleBroadcast=now; broadcast(room, message, ws);
+      room.lastBattleBroadcast=now; broadcast(room, message, ws, raw);
     } else if (message.type === "battle_end" && isHost && room.started) {
       broadcast(room, message, ws);
     }
