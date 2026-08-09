@@ -126,12 +126,15 @@ test('Тетрадь смерти использует ручной выбор �
 
 test('большая комната ограничивает рендер, звук и сетевую нагрузку', () => {
   const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
   const server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
   assert.match(source, /function crowdedBattle\(\)/);
-  assert.match(source, /function battleRenderInterval\(host=false\)/);
+  assert.match(source, /function battleRenderInterval\(\)\{return 13\}/);
+  assert.match(source, /function trackBattleFps\(now\)/);
+  assert.match(html, /id="battleFps"/);
   assert.match(source, /syncInterval=crowdedBattle\(\)\?180:150/);
   assert.match(source, /projectiles:b\.projectiles\.slice\(-48\)/);
-  assert.match(source, /effects:b\.effects\.slice\(crowdedBattle\(\)\?-24:-32\)/);
+  assert.match(source, /effects:b\.effects\.slice\(crowdedBattle\(\)\?-16:-32\)/);
   assert.doesNotMatch(source, /blood:b\.blood/);
   assert.match(source, /frameInterval=battleRenderInterval\(false\)/);
   assert.match(source, /maxChannels=limit\+\(priority\?4:0\)/);
